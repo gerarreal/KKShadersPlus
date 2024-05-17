@@ -8,6 +8,7 @@
   <website>https://www.pixiv.net/en/users/66587336</website>
   <KK_MaterialEditor>
     <Shader Name="xukmi/SkinPlus" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_SkinPlus">
+      <Property Name="AlphaMask" Type="Texture" />
       <Property Name="DetailMask" Type="Texture" />
       <Property Name="LineMask" Type="Texture" />
       <Property Name="liquidmask" Type="Texture" />
@@ -76,6 +77,7 @@
       <Property Name="ShadowHSV" Type="Color" />
     </Shader>
     <Shader Name="xukmi/SkinPlusReflect" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_SkinPlusReflect">
+	  <Property Name="AlphaMask" Type="Texture" />
       <Property Name="DetailMask" Type="Texture" />
       <Property Name="LineMask" Type="Texture" />
       <Property Name="liquidmask" Type="Texture" />
@@ -157,6 +159,7 @@
       <Property Name="ShadowHSV" Type="Color" />
     </Shader>
     <Shader Name="xukmi/SkinPlusTess" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_SkinPlusTess">
+	  <Property Name="AlphaMask" Type="Texture" />
       <Property Name="DetailMask" Type="Texture" />
       <Property Name="LineMask" Type="Texture" />
       <Property Name="liquidmask" Type="Texture" />
@@ -236,6 +239,7 @@
       <Property Name="ShadowHSV" Type="Color" />
     </Shader>
     <Shader Name="xukmi/SkinPlusTessReflect" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_SkinPlusTessReflect">
+	  <Property Name="AlphaMask" Type="Texture" />
       <Property Name="DetailMask" Type="Texture" />
       <Property Name="LineMask" Type="Texture" />
       <Property Name="liquidmask" Type="Texture" />
