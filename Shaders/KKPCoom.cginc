@@ -2,14 +2,17 @@
 #define KKP_COOM_INC
 
 void GetCumVals(float2 uv, out float mask, out float3 normal){
+	float4 samplerTex = SAMPLE_TEX2D(SAMPLERTEX, float2(0,0));
+	
 	float2 liquidUV = uv * _LiquidTiling.zw + _LiquidTiling.xy;
+	liquidUV = liquidUV - samplerTex.r * 1E-20;
 	float2 liquidUV2 = liquidUV * _Texture3_ST.xy + _Texture3_ST.zw;
 	liquidUV = liquidUV * _Texture2_ST.xy + _Texture2_ST.zw;
-	float4 liquidTex = SAMPLE_TEX2D_SAMPLER(_Texture2, SAMPLERTEX2, liquidUV);
+	float4 liquidTex = SAMPLE_TEX2D_SAMPLER(_Texture2, SAMPLERTEX, liquidUV);
 	float liquidValTop = max(saturate(_liquidftop - 1.0) * liquidTex.y,
 						  saturate(_liquidftop) * liquidTex.x);
 	float2 liquidMaskUV = uv * _liquidmask_ST.xy + _liquidmask_ST.zw;
-	float4 liquidMaskTex = SAMPLE_TEX2D_SAMPLER(_liquidmask, SAMPLERTEX2, liquidMaskUV);
+	float4 liquidMaskTex = SAMPLE_TEX2D_SAMPLER(_liquidmask, SAMPLERTEX, liquidMaskUV);
 	float3 liquidMaskVals = max(liquidMaskTex.zzy, liquidMaskTex.yxx);
 	liquidMaskVals = liquidMaskTex.rgb - liquidMaskVals;
 	liquidMaskTex.xy = min(liquidMaskTex.yz, liquidMaskTex.xy);
@@ -28,7 +31,7 @@ void GetCumVals(float2 uv, out float mask, out float3 normal){
 	liquidFinalMask = max(liquidFinalMask, liquidButtBLegs.y);
 
 	//Normal
-	float3 liquidNormal = UnpackNormal(SAMPLE_TEX2D_SAMPLER(_Texture3, SAMPLERTEX2, liquidUV2));
+	float3 liquidNormal = UnpackNormal(SAMPLE_TEX2D_SAMPLER(_Texture3, SAMPLERTEX, liquidUV2));
 
 	mask = liquidFinalMask;
 	normal = liquidNormal;

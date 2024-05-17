@@ -54,8 +54,12 @@ float3x3 AngleAxis3x3(float angle, float3 axis) {
 }
 
 fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
+	//Default sampling
+	float4 sampledDefault = SAMPLE_TEX2D(SAMPLERTEX, i.uv0);
+	
 	//Clips based on alpha texture
 	float4 mainTex = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
+	mainTex = mainTex + sampledDefault * 1E-30;
 	AlphaClip(i.uv0, mainTex.a);
 
 	float3 worldLightPos = normalize(_WorldSpaceLightPos0.xyz);
@@ -299,5 +303,5 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
 	if (alpha <= 0) discard;
 	#endif
 
-	return float4(max(finalDiffuse,1E-06), alpha);
+	return float4(max(finalDiffuse, max(sampledDefault.r, 1E-06)), alpha);
 }

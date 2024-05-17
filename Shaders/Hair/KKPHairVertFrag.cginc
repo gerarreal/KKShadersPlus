@@ -67,6 +67,7 @@ float3x3 AngleAxis3x3(float angle, float3 axis)
 
 fixed4 frag (Varyings i, int frontFace : VFACE) : SV_Target
 {
+	float4 samplerTex = SAMPLE_TEX2D(SAMPLERTEX, float2(0,0));
 	
 	float3 viewDir = normalize(_WorldSpaceCameraPos - i.posWS);
 	float3 worldLight = normalize(_WorldSpaceLightPos0.xyz); //Directional light
@@ -250,7 +251,7 @@ fixed4 frag (Varyings i, int frontFace : VFACE) : SV_Target
 	float4 emission = GetEmission(i.uv0);
 	finalDiffuse = finalDiffuse * (1 - emission.a) +  (emission.a * emission.rgb);
 
-	return float4(max(finalDiffuse,1E-06), alpha);
+	return float4(max(finalDiffuse,1E-06 - samplerTex.a * 1.2E-38), alpha);
 }
 
 #endif

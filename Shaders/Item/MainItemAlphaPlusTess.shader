@@ -2,6 +2,8 @@
 {
 	Properties
 	{
+		_DefaultTex ("Default Texture For Sampling", 2D) = "black" {}
+		
 		_AnotherRamp ("Another Ramp(LineR)", 2D) = "white" {}
 		_MainTex ("MainTex", 2D) = "white" {}
 		_NormalMap ("Normal Map", 2D) = "bump" {}
@@ -102,7 +104,7 @@
 			CGPROGRAM
 			#pragma target 5.0
 			#pragma vertex TessVert
-			#pragma fragment frag
+			#pragma fragment outlineFrag
 			#pragma hull hull
 			#pragma domain domain
 			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu 
@@ -161,21 +163,21 @@
 				if(!_OutlineOn)
 					o.posCS = float4(2,2,2,1);
 				o.uv0 = v.uv0;
-				1;
+				11111;
 				return o;
 			}
 			
 			#include "KKPItemTess.cginc"
 
-			fixed4 frag (Varyings i) : SV_Target
+			fixed4 outlineFrag (Varyings i) : SV_Target
 			{
+				//Sample default
+				float4 sampledDefault = SAMPLE_TEX2D(SAMPLERTEX, i.uv0);
+				
 				//Clips based on alpha texture
 				float4 mainTex = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
-				AlphaClip(i.uv0,  _OutlineOn ? mainTex.a * _Alpha : 0);
-
-				float3 worldLightPos = normalize(_WorldSpaceLightPos0.xyz);
-				float3 viewDir = normalize(_WorldSpaceCameraPos.xyz - i.posWS);
-				float3 halfDir = normalize(viewDir + worldLightPos);
+				mainTex = mainTex + sampledDefault * 1E-30;
+				AlphaClip(i.uv0, _OutlineOn ? mainTex.a * _Alpha : 0);
 
 				float4 colorMask = SAMPLE_TEX2D_SAMPLER(_ColorMask, SAMPLERTEX, i.uv0 * + _ColorMask_ST.xy + _ColorMask_ST.zw);
 				float3 color;
@@ -253,8 +255,6 @@
 
 				float3 finalDiffuse = lerp(diffuse, _OutlineColor.rgb, _OutlineColor.a);
 				return float4(finalDiffuse, mainTex.a * _Alpha);
-
-
 			}
 			ENDCG
 		}
@@ -349,7 +349,7 @@
 			CGPROGRAM
 			#pragma target 5.0
 			#pragma vertex TessVert
-			#pragma fragment frag
+			#pragma fragment shadowFrag
 			#pragma hull hull
 			#pragma domain domain
 			#pragma multi_compile_shadowcaster
@@ -386,12 +386,16 @@
 			
 			#include "KKPItemTess.cginc"
 
-            float4 frag(v2f i) : SV_Target
+            float4 shadowFrag(v2f i) : SV_Target
             {
+				//Sample default
+				float4 sampledDefault = SAMPLE_TEX2D(SAMPLERTEX, i.uv0);
+				
 				float2 alphaUV = i.uv0 * _AlphaMask_ST.xy + _AlphaMask_ST.zw;
 				float4 alphaMask = SAMPLE_TEX2D_SAMPLER(_AlphaMask, SAMPLERTEX, alphaUV);
 				float2 alphaVal = -float2(_alpha_a, _alpha_b) + float2(1.0f, 1.0f);
 				float mainTexAlpha = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw).a;
+				mainTexAlpha = mainTexAlpha + sampledDefault.r * 1E-30;
 				alphaVal = max(alphaVal, alphaMask.xy);
 				alphaVal = min(alphaVal.y, alphaVal.x);
 				alphaVal *= mainTexAlpha;

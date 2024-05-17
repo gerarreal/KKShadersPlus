@@ -2,8 +2,7 @@
 #define KKP_MAIN_INPUT
 
 #include "../KKPDeclarations.cginc"
-#define SAMPLERTEX _NormalMap
-#define SAMPLERTEX2 _NormalMap
+#define SAMPLERTEX _DefaultTex
 
 	struct VertexData
 	{
@@ -55,6 +54,8 @@
 	float4 _OutlineColor;
 
 	//KK Inputs
+	
+	DECLARE_TEX2D(_DefaultTex);
 
 	//Input Textures
 	DECLARE_TEX2D_NOSAMPLER(_MainTex);
@@ -64,7 +65,6 @@
 	DECLARE_TEX2D_NOSAMPLER(_liquidmask);
 	DECLARE_TEX2D_NOSAMPLER(_Texture2); //Liquid Tex
 	DECLARE_TEX2D_NOSAMPLER(_Texture3); //Liquid Normal
-	//DECLARE_TEX2D_NOSAMPLER(_SpecularMap);
 	DECLARE_TEX2D(_overtex1);
 	DECLARE_TEX2D(_overtex2);
 	DECLARE_TEX2D(_overtex3);
@@ -80,7 +80,6 @@
 	float4 _liquidmask_ST;
 	float4 _Texture2_ST; //Liquid Tex
 	float4 _Texture3_ST; //Liquid Normal
-	//float4 _SpecularMap_ST;
 	float4 _overtex1_ST;
 	float4 _overtex2_ST;
 	float4 _overtex3_ST;
@@ -132,4 +131,12 @@
 	float _DisablePointLights;
 	float _DisableShadowedMatcap;
 	float _rimReflectMode;
+	
+	// Extra color
+	DECLARE_TEX2D_NOSAMPLER(_ColMask);
+	float4 _ColMask_ST;
+	float4 _Col0;
+	float4 _Col1;
+	float4 _Col2;
+	float4 _Col3;
 #endif

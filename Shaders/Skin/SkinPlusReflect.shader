@@ -2,6 +2,12 @@
 {
 	Properties
 	{
+		_ColMask ("Color Mask", 2D) = "black" {}
+		[Gamma]_Col0 ("Color 0", Color) = (1, 1, 1, 1)
+		[Gamma]_Col1 ("Color 1", Color) = (1, 1, 1, 1)
+		[Gamma]_Col2 ("Color 2", Color) = (1, 1, 1, 1)
+		[Gamma]_Col3 ("Color 3", Color) = (1, 1, 1, 1)
+		
 		_MainTex ("MainTex", 2D) = "white" {}
 		[Gamma]_overcolor1 ("Over Color1", Vector) = (1,1,1,1)
 		_overtex1 ("Over Tex1", 2D) = "black" {}

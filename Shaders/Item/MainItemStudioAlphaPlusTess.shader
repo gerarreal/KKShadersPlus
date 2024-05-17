@@ -2,6 +2,8 @@
 {
 	Properties
 	{
+		_DefaultTex ("Default Texture For Sampling", 2D) = "black" {}
+		
 		// Vanilla textures
 		_AnotherRamp ("Another Ramp(LineR)", 2D) = "white" {}
 		_ColorMask ("Color Mask", 2D) = "black" {}
@@ -34,7 +36,6 @@
 		[Gamma]_EmissionColor("Emission Color", Color) = (1,1,1,1)
 		[Gamma]_SpecularColor ("Specular Color", Color) = (1,1,1,1)
 		[Gamma]_CustomAmbient("Custom Ambient", Color) = (0.666666666, 0.666666666, 0.666666666, 1)
-		[Gamma]_OutlineColor ("Outline Color", Color) = (0,0,0,0)
 		
 		// Vanilla toggles and floats
 		[MaterialToggle] _ambientshadowOFF ("Ambient Shadow OFF", Float) = 0
@@ -48,7 +49,6 @@
 		
 		_alpha ("Alpha", Float) = 1.0
 		_EmissionPower("Emission Power", Float) = 1
-		_LineWidthS ("LineWidthS", Float) = 1
 		_patternrotator1 ("Pattern 1 rotation", Range(-1,1)) = 0
 		_patternrotator2 ("Pattern 2 rotation", Range(-1,1)) = 0
 		_patternrotator3 ("Pattern 3 rotation", Range(-1,1)) = 0
@@ -63,7 +63,6 @@
 		[Enum(Off,0,On,1)] _AlphaOptionCutoff ("Cutoff On", Float) = 1.0
 		[Enum(Off,0,On,1)] _AlphaOptionZWrite ("ZWrite", Float) = 1.0
 		[Enum(Off,0,Front,1,Back,2)] _CullOption ("Cull Option", Range(0, 2)) = 2
-		[Enum(Off,0,On,1)] _OutlineOn ("Outline On", Float) = 1.0
 		[MaterialToggle] _UseRampForLights ("Use Ramp For Light", Float) = 1
 		[MaterialToggle] _UseRampForSpecular ("Use Ramp For Specular", Float) = 0
 		[MaterialToggle] _UseLightColorSpecular ("Use Light Color Specular", Float) = 1
@@ -195,7 +194,7 @@
 				o.shadowCoordinate.zw = projPos.zw;
 				o.shadowCoordinate.xy = projbiTan.zz + projbiTan.xw;
 			#endif
-				1;
+				1111;
 				return o;
 			}
 
@@ -218,7 +217,7 @@
 			#pragma target 5.0
 			
 			#pragma vertex TessVert
-			#pragma fragment frag
+			#pragma fragment shadowFrag
 			#pragma hull hull
 			#pragma domain domain
 			#pragma multi_compile_shadowcaster
@@ -254,9 +253,13 @@
                 return o;
             }
 
-            float4 frag(v2f i) : SV_Target
+            float4 shadowFrag(v2f i) : SV_Target
             {
+				//Sample default
+				float4 sampledDefault = SAMPLE_TEX2D(SAMPLERTEX, i.uv0);
+				
 				float mainTexAlpha = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw).a;
+				mainTexAlpha = mainTexAlpha + sampledDefault.r * 1E-30;
 				if(mainTexAlpha * _alpha <= _Cutoff)
 					discard;
                 SHADOW_CASTER_FRAGMENT(i)

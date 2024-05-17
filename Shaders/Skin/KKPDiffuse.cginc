@@ -167,9 +167,27 @@ float3 GetDiffuse(Varyings i){
 	float mask = saturate(_tex1mask);
 	overTex1.rgb = mask * overTex1.rgb + overTex1Col;
 
-	//Maintex and blend overTex1
+	//Maintex
 	float2 mainTexUV = i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw;
 	float4 mainTex = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, mainTexUV);
+	
+	//Color MainTex
+	_Col0 = max(_Col0, 1E-06);
+	_Col1 = max(_Col1, 1E-06);
+	_Col2 = max(_Col2, 1E-06);
+	_Col3 = max(_Col3, 1E-06);
+	
+	float2 colorUV = i.uv0 * _ColMask_ST.xy + _ColMask_ST.zw;
+	float4 colorMask = SAMPLE_TEX2D_SAMPLER(_ColMask, SAMPLERTEX, colorUV);
+	
+	float3 color = _Col0;
+	color = colorMask.r * (_Col1 - color) + color;
+	color = colorMask.g * (_Col2 - color) + color;
+	color = colorMask.b * (_Col3 - color) + color;
+	
+	mainTex.rgb = mainTex.rgb * color;
+	
+	//Blend MainTex with overtex1
 	overTex1.rgb -= mainTex.rgb;
 	overTex1.rgb = overTex1Col.a * overTex1.rgb + mainTex.rgb;
 

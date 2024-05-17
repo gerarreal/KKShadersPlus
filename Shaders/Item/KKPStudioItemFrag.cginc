@@ -77,8 +77,14 @@ float ShadowExtendAdjustment(float x) {
 }
 
 fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
+	//Default sampling
+	float4 sampledDefault = SAMPLE_TEX2D(SAMPLERTEX, i.uv0);
+	
+	_ambientshadowG = max(_ambientshadowG, 1E-06);
+	
 	//Clips based on main texture
 	float4 mainTex = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
+	mainTex = mainTex + sampledDefault * 1E-30;
 	if (mainTex.a <= _Cutoff) discard;
 	
 	float alpha = 1;
@@ -104,6 +110,10 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
 	float3 patternMask1 = SAMPLE_TEX2D_SAMPLER(_PatternMask1, _PatternMask1, PatternUV(i, _PatternMask1_ST, _Patternuv1, _patternrotator1, _patternclamp1)).rgb;
 	float3 patternMask2 = SAMPLE_TEX2D_SAMPLER(_PatternMask2, _PatternMask1, PatternUV(i, _PatternMask2_ST, _Patternuv2, _patternrotator2, _patternclamp2)).rgb;
 	float3 patternMask3 = SAMPLE_TEX2D_SAMPLER(_PatternMask3, _PatternMask1, PatternUV(i, _PatternMask3_ST, _Patternuv3, _patternrotator3, _patternclamp3)).rgb;
+	
+	_Color = max(_Color, 1E-06); _Color1_2 = max(_Color1_2, 1E-06);
+	_Color2 = max(_Color2, 1E-06); _Color2_2 = max(_Color2_2, 1E-06);
+	_Color3 = max(_Color3, 1E-06); _Color3_2 = max(_Color3_2, 1E-06);
 	
 	float3 color1col = patternMask1 * _Color.rgb + (1 - patternMask1) * _Color1_2.rgb;
 	float3 color2col = patternMask2 * _Color2.rgb + (1 - patternMask2) * _Color2_2.rgb;
@@ -158,7 +168,7 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
 #endif
 
 	float shadowExtendAnother = 1 - _ShadowExtendAnother;
-	float kkMetal = lerp(lineMask.r, 1, _AnotherRampFull);
+	float kkMetal = _AnotherRampFull * (1 - lineMask.r) + lineMask.r;
 
 	float kkMetalMap = kkMetal;
 	kkMetal *= _UseKKMetal;
@@ -198,12 +208,19 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
 #ifdef VERTEXLIGHT_ON
 	vertexLighting = GetVertexLighting(vertexLights, normal);
 	float2 vertexLightRampUV = vertexLighting.a * _RampG_ST.xy + _RampG_ST.zw;
-	vertexLightRamp = tex2D(_RampG, vertexLightRampUV).x;
+	vertexLightRamp = _UseRampForLights ? tex2D(_RampG, vertexLightRampUV).x : 1.0;
 	float3 rampLighting = GetRampLighting(vertexLights, normal, vertexLightRamp);
 	vertexLighting.rgb = _UseRampForLights ? rampLighting : vertexLighting.rgb;
 #endif
-	float lambert = dot(_WorldSpaceLightPos0.xyz, normal);
-	lambert = max(lambert, vertexLighting.a);
+	float shadowAttenuation = 1;
+#ifdef SHADOWS_SCREEN
+	float2 shadowMapUV = i.shadowCoordinate.xy / i.shadowCoordinate.ww;
+	float4 shadowMap = tex2D(_ShadowMapTexture, shadowMapUV);
+	shadowAttenuation = saturate(shadowMap.x * 2.0 - 1.0);
+#endif
+	float lambert = saturate(dot(_WorldSpaceLightPos0.xyz, normal) * shadowAttenuation + vertexLighting.a);
+	// return float4(lambert, lambert, lambert, 1);
+	// lambert = max(lambert, vertexLighting.a);
 	float2 rampUV = lambert * _RampG_ST.xy + _RampG_ST.zw;
 	float ramp = tex2D(_RampG, rampUV);
 
@@ -225,13 +242,6 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
 	float anotherRamp = tex2D(_AnotherRamp, anotherRampUV);
 	specular = log2(specular);
 	float finalRamp = lerp(ramp, anotherRamp, kkMetal);
-
-#ifdef SHADOWS_SCREEN
-	float2 shadowMapUV = i.shadowCoordinate.xy / i.shadowCoordinate.ww;
-	float4 shadowMap = tex2D(_ShadowMapTexture, shadowMapUV);
-	float shadowAttenuation = saturate(shadowMap.x * 2.0 - 1.0);
-	finalRamp *= shadowAttenuation;
-#endif
 	
 	float rimPlace = lerp(lerp(1 - finalRamp, 1, min(_rimReflectMode+1, 1)), finalRamp, max(0, _rimReflectMode));
 	diffuse = lerp(diffuse, kkpFresCol, _KKPRimColor.a * kkpFres * _KKPRimAsDiffuse * rimPlace);
@@ -250,27 +260,35 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
 	float2 detailMaskUV2 = specularHeight * detailSpecularOffset + i.uv0;
 	detailMaskUV2 = detailMaskUV2 * _DetailMask_ST.xy + _DetailMask_ST.zw;
 	float drawnSpecular = tex2D(_DetailMask, detailMaskUV2).x;
-	float drawnSpecularSquared = min(drawnSpecular * drawnSpecular, 1.0);
+	float drawnSpecularSquared = drawnSpecular * drawnSpecular;
 
 	_SpecularPower *= _UseDetailRAsSpecularMap ? detailMask.r : 1;
+	drawnSpecular = saturate(drawnSpecularSquared * _SpecularPower);
 
-	float specularPower = _SpecularPower * 256.0;
+	float specularPower = _SpecularPower * 256.0 * shadowAttenuation * _notusetexspecular;
 	specular *= specularPower;
 	specular = exp2(specular) * 5.0 - 4.0;
-	drawnSpecular = saturate(specular * _SpecularPower + drawnSpecularSquared);
 #ifdef KKP_EXPENSIVE_RAMP
 	float2 lightRampUV = specular * _RampG_ST.xy + _RampG_ST.zw;
-	specular = tex2D(_RampG, lightRampUV) * _UseRampForSpecular + specular * (1 - _UseRampForSpecular);
+	specular = lerp(specular, tex2D(_RampG, lightRampUV), _UseRampForSpecular);
 #endif
-	specular = saturate(specular * _SpecularPower);
-	specular = specular - drawnSpecular;
-	specular = _notusetexspecular * specular + drawnSpecular;
+
+	specular = saturate(specular * _SpecularPower * shadowAttenuation);
 	float specularVertex = 0.0;
 	float3 specularVertexCol = 0.0;
+	
 #ifdef VERTEXLIGHT_ON
 	specularVertex = GetVertexSpecularDiffuse(vertexLights, specularNormal, viewDir, _SpecularPower, specularVertexCol);
+	specularVertex = specularVertex * specularVertex;
 #endif
-	float3 specularCol = saturate(specular) * _SpecularColor.rgb + saturate(specularVertex) * specularVertexCol * _notusetexspecular;
+
+	float3 specularCol =
+	// Directional
+	saturate(specular) * _SpecularColor.rgb * _LightColor0.rgb +
+	// Point
+	saturate(specularVertex) * _SpecularColor.rgb * specularVertexCol;
+	
+	specularCol = lerp(drawnSpecular * _SpecularColor.rgb, specularCol, _notusetexspecular);
 	specularCol *= _SpecularColor.a;
 
 	float3 ambientShadowAdjust2 = AmbientShadowAdjust();
@@ -297,9 +315,9 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
 	shadingAdjustment = 1 - shadingAdjustment * shadowExtendAnother;
 	shadingAdjustment = shadingAdjustment + shadowExtendShaded;
 	shadingAdjustment *= diffuseShadow + specularCol;
-
-	float4 emissionColor = float4(diffuse, 1);
-	float emissionMask = saturate(detailMask.r * 5) * 3;
+	
+	float3 emissionColorVanilla = diffuse;
+	float emissionMaskVanilla = saturate(detailMask.r * 5) * 3;
 	
 	diffuse = diffuse * _LineColorG;
 	float3 lineCol = -diffuse * shadowExtendShaded + 1;
@@ -326,10 +344,16 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
 
 	finalDiffuse = lerp(finalDiffuse, kkpFresCol, _KKPRimColor.a * kkpFres * rimPlace * (1 - _KKPRimAsDiffuse));
 
-	float4 emission = GetEmission(i.uv0);
-	finalDiffuse = finalDiffuse * (1 - emission.a) + (emission.a*emission.rgb) + emissionColor * emissionMask * _EmissionPower;
-	
 	finalDiffuse = lerp(finalDiffuse, shadowsOFF, saturate(2 * _ambientshadowOFF - 1));
+	
+	// Finally, emission
+	float2 emissionUV = i.uv0 * _EmissionMask_ST.xy + _EmissionMask_ST.zw;
+	float4 emissionMask = tex2D(_EmissionMask, emissionUV);
+	
+	finalDiffuse =
+		finalDiffuse +
+		(emissionMask.rgb * _EmissionColor.rgb) * (emissionMask.a * _EmissionColor.a * _EmissionIntensity) +
+		emissionColorVanilla * emissionMaskVanilla * _EmissionPower;
 
-	return float4(max(finalDiffuse,1E-06), alpha);
+	return float4(max(finalDiffuse, max(sampledDefault.r, 1E-06)), alpha);
 }

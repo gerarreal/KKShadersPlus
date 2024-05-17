@@ -57,7 +57,7 @@ float MaxGrayscale(float3 col){
 float4 GetVertexLighting(inout KKVertexLight lights[4], float3 normal){
 	float4 finalOutput = 0;
 	[unroll]
-	for(int i = 0; i < 4; i++){
+	for(int i = 0; i < 4; i++) {
 		KKVertexLight light = lights[i];
 		float dotProduct = dot(normal, light.dir);
 		float lighting = dotProduct * light.atten;

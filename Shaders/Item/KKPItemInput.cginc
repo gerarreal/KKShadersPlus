@@ -2,8 +2,8 @@
 #define KKP_ITEM_INPUT
 
 #include "../KKPDeclarations.cginc"
-#define SAMPLERTEX _MainTex
-#define SAMPLERTEX2 _LineMask
+#define SAMPLERTEX _DefaultTex
+#define SAMPLERTEX2 _DefaultTex
 
 	struct VertexData
 	{
@@ -49,6 +49,8 @@
 	float _KKPRimAsDiffuse;
 	float _KKPRimRotateX;
 	float _KKPRimRotateY;
+	
+	DECLARE_TEX2D(_DefaultTex);
 
 	//Input Textures
 	DECLARE_TEX2D(_MainTex);
@@ -157,6 +159,7 @@
 	float _AnotherRampFull;
 	float _LineWidthS;
 	float _Alpha;
+	
 	//Global light params set by KK 
 	float4 _LineColorG;
 	float _linewidthG; 

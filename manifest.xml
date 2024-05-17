@@ -2,12 +2,17 @@
 <manifest schema-ver="1">
   <guid>xukmi.Shaders.VanillaPlus</guid>
   <name>Vanilla Plus</name>
-  <version>1.5.1</version>
+  <version>1.5.2_prerelease</version>
   <author>xukmi</author>
   <description>Vanilla KK Shaders with more features</description>
   <website>https://www.pixiv.net/en/users/66587336</website>
-  <KK_MaterialEditor>
+  <MaterialEditor>
     <Shader Name="xukmi/SkinPlus" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_SkinPlus">
+	  <Property Name="ColMask" Type="Texture" />
+	  <Property Name="Col0" Type="Color" />
+	  <Property Name="Col1" Type="Color" />
+	  <Property Name="Col2" Type="Color" />
+	  <Property Name="Col3" Type="Color" />
       <Property Name="AlphaMask" Type="Texture" />
       <Property Name="DetailMask" Type="Texture" />
       <Property Name="LineMask" Type="Texture" />
@@ -77,6 +82,11 @@
       <Property Name="ShadowHSV" Type="Color" />
     </Shader>
     <Shader Name="xukmi/SkinPlusReflect" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_SkinPlusReflect">
+	  <Property Name="ColMask" Type="Texture" />
+	  <Property Name="Col0" Type="Color" />
+	  <Property Name="Col1" Type="Color" />
+	  <Property Name="Col2" Type="Color" />
+	  <Property Name="Col3" Type="Color" />
 	  <Property Name="AlphaMask" Type="Texture" />
       <Property Name="DetailMask" Type="Texture" />
       <Property Name="LineMask" Type="Texture" />
@@ -159,6 +169,11 @@
       <Property Name="ShadowHSV" Type="Color" />
     </Shader>
     <Shader Name="xukmi/SkinPlusTess" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_SkinPlusTess">
+	  <Property Name="ColMask" Type="Texture" />
+	  <Property Name="Col0" Type="Color" />
+	  <Property Name="Col1" Type="Color" />
+	  <Property Name="Col2" Type="Color" />
+	  <Property Name="Col3" Type="Color" />
 	  <Property Name="AlphaMask" Type="Texture" />
       <Property Name="DetailMask" Type="Texture" />
       <Property Name="LineMask" Type="Texture" />
@@ -239,6 +254,11 @@
       <Property Name="ShadowHSV" Type="Color" />
     </Shader>
     <Shader Name="xukmi/SkinPlusTessReflect" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_SkinPlusTessReflect">
+	  <Property Name="ColMask" Type="Texture" />
+	  <Property Name="Col0" Type="Color" />
+	  <Property Name="Col1" Type="Color" />
+	  <Property Name="Col2" Type="Color" />
+	  <Property Name="Col3" Type="Color" />
 	  <Property Name="AlphaMask" Type="Texture" />
       <Property Name="DetailMask" Type="Texture" />
       <Property Name="LineMask" Type="Texture" />
@@ -1811,12 +1831,9 @@
       <Property Name="SpecularNormalScale" Type="Float" Range="0, 1" />
       <Property Name="SpecularDetailNormalScale" Type="Float" Range="0, 1" />
       <Property Name="SpecularPower" Type="Float" Range="0, 1" />
-      <Property Name="LineWidthS" Type="Float" Range="0, 1" />
       <Property Name="UseRampForLights" Type="Float" Range="0, 1" />
       <Property Name="UseRampForSpecular" Type="Float" Range="0, 1" />
       <Property Name="UseLightColorSpecular" Type="Float" Range="0, 1" />
-      <Property Name="OutlineOn" Type="Float" Range="0, 1" />
-      <Property Name="OutlineColor" Type="Color" />
       <Property Name="Cutoff" Type="Float" Range="0, 1" />
       <Property Name="UseDetailRAsSpecularMap" Type="Float" Range="0, 1" />
       <Property Name="CullOption" Type="Float" Range="0, 2" />
@@ -1892,12 +1909,9 @@
       <Property Name="SpecularNormalScale" Type="Float" Range="0, 1" />
       <Property Name="SpecularDetailNormalScale" Type="Float" Range="0, 1" />
       <Property Name="SpecularPower" Type="Float" Range="0, 1" />
-      <Property Name="LineWidthS" Type="Float" Range="0, 1" />
       <Property Name="UseRampForLights" Type="Float" Range="0, 1" />
       <Property Name="UseRampForSpecular" Type="Float" Range="0, 1" />
       <Property Name="UseLightColorSpecular" Type="Float" Range="0, 1" />
-      <Property Name="OutlineOn" Type="Float" Range="0, 1" />
-      <Property Name="OutlineColor" Type="Color" />
       <Property Name="Cutoff" Type="Float" Range="0, 1" />
       <Property Name="UseDetailRAsSpecularMap" Type="Float" Range="0, 1" />
       <Property Name="CullOption" Type="Float" Range="0, 2" />
@@ -1970,6 +1984,6 @@
       <Property Name="ShrinkVerticalAdjust" Type="Float" Range="-1, 1" />
       <Property Name="Clock" Type="Color" />
     </Shader>
-  </KK_MaterialEditor>
+  </MaterialEditor>
   <game>Koikatsu</game>
 </manifest>

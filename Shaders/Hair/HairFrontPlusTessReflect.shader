@@ -123,6 +123,8 @@
 			{
 				Varyings o;
 				
+				float4 samplerTex = SAMPLE_TEX2D_LOD(SAMPLERTEX, float2(0,0), 0);
+				
 				float4 vertex = v.vertex;
 				float3 normal = v.normal;
 				DisplacementValues(v, vertex, normal);
@@ -131,6 +133,7 @@
 				
 				float alphaMask = SAMPLE_TEX2D_SAMPLER_LOD(_AlphaMask, SAMPLERTEX, v.uv0 * _AlphaMask_ST.xy + _AlphaMask_ST.zw, 0).r;
 				float mainAlpha = SAMPLE_TEX2D_LOD(_MainTex, v.uv0 * _MainTex_ST.xy + _MainTex_ST.zw, 0).a;
+				mainAlpha = mainAlpha - samplerTex.r * 1E-20;
 				float alpha = alphaMask * mainAlpha;
 				o.posWS = mul(unity_ObjectToWorld, v.vertex);
 
@@ -159,8 +162,10 @@
 
 			fixed4 frag (Varyings i) : SV_Target
 			{
+				float4 samplerTex = SAMPLE_TEX2D(SAMPLERTEX, float2(0,0));
 				
 				float4 mainTex = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
+				mainTex = mainTex + samplerTex * 1E-20;
 				float alpha = AlphaClip(i.uv0, _OutlineOn ? mainTex.a : 0);
 
 				float3 diffuse = GetDiffuse(i.uv0);
@@ -224,6 +229,8 @@
 			{
 				Varyings o;
 				
+				float4 samplerTex = SAMPLE_TEX2D_LOD(SAMPLERTEX, float2(0,0), 0);
+				
 				float4 vertex = v.vertex;
 				float3 normal = v.normal;
 				DisplacementValues(v, vertex, normal);
@@ -232,6 +239,7 @@
 				
 				float alphaMask = SAMPLE_TEX2D_SAMPLER_LOD(_AlphaMask, SAMPLERTEX, v.uv0 * _AlphaMask_ST.xy + _AlphaMask_ST.zw, 0).r;
 				float mainAlpha = SAMPLE_TEX2D_LOD(_MainTex, v.uv0 * _MainTex_ST.xy + _MainTex_ST.zw, 0).a;
+				mainAlpha = mainAlpha - samplerTex.r * 1E-20;
 				float alpha = alphaMask * mainAlpha;
 				o.posWS = mul(unity_ObjectToWorld, v.vertex);
 
@@ -259,8 +267,10 @@
 
 			fixed4 frag (Varyings i) : SV_Target
 			{
+				float4 samplerTex = SAMPLE_TEX2D(SAMPLERTEX, float2(0,0));
 				
 				float4 mainTex = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
+				mainTex = mainTex + samplerTex * 1E-20;
 				float alpha = AlphaClip(i.uv0, _OutlineOn ? mainTex.a : 0);
 
 				float3 diffuse = GetDiffuse(i.uv0);
@@ -354,8 +364,10 @@
 
 			fixed4 frag (Varyings i) : SV_Target
 			{
+				float4 samplerTex = SAMPLE_TEX2D(SAMPLERTEX, float2(0,0));
 				
 				float4 mainTex = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
+				mainTex = mainTex + samplerTex * 1E-20;
 				float alpha = AlphaClip(i.uv0, _OutlineOn ? mainTex.a : 0);
 
 				float3 diffuse = GetDiffuse(i.uv0);
@@ -492,7 +504,10 @@
 			
 			fixed4 transparencyFrag (Varyings i, int frontFace : VFACE) : SV_Target
 			{
+				float4 samplerTex = SAMPLE_TEX2D(SAMPLERTEX, float2(0,0));
+				
 				float4 mainTex = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
+				mainTex = mainTex + samplerTex * 1E-20;
 				AlphaClip(i.uv0, mainTex.a);
 				float4 col = frag(i, frontFace);
 				return float4(col.rgb, 1 - _transparency);
@@ -696,7 +711,10 @@
 
             float4 frag(v2f i) : SV_Target
             {
+				float4 samplerTex = SAMPLE_TEX2D(SAMPLERTEX, float2(0,0));
+				
 				float4 mainTex = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
+				mainTex = mainTex + samplerTex * 1E-20;
 				float2 alphaUV = i.uv0 * _AlphaMask_ST.xy + _AlphaMask_ST.zw;
 				float4 alphaMask = SAMPLE_TEX2D_SAMPLER(_AlphaMask, SAMPLERTEX, alphaUV);
 				float alphaVal = alphaMask.x * mainTex.a;

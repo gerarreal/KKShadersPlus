@@ -1,3 +1,15 @@
+#ifndef ROTATEUV
+float2 rotateUV(float2 uv, float2 pivot, float rotation) {
+	float cosa = cos(rotation);
+	float sina = sin(rotation);
+	uv -= pivot;
+	return float2(
+		cosa * uv.x - sina * uv.y,
+		cosa * uv.y + sina * uv.x 
+	) + pivot;
+}
+#endif
+
 fixed4 frag (Varyings i) : SV_Target {
 	float4 ambientShadow = 1 - _ambientshadowG.wxyz;
 	float3 ambientShadowIntensity = -ambientShadow.x * ambientShadow.yzw + 1;
@@ -26,13 +38,7 @@ fixed4 frag (Varyings i) : SV_Target {
 		finalAmbientShadow = hlslcc_movcTemp;
 	}
 	finalAmbientShadow = saturate(finalAmbientShadow);
-	float2 uv = i.uv0 - 0.5;
-	float angle = _rotation * 6.28318548;
-	float rotCos = cos(angle);
-	float rotSin = sin(angle);
-	float3 rotation = float3(-rotSin, rotCos, rotSin);
-	float2 dotRot = float2(dot(uv, rotation.yz), dot(uv, rotation.xy));
-	uv = dotRot + 0.5;
+	float2 uv = rotateUV(i.uv0, float2(0.5, 0.5), -_rotation*6.28318548);
 	uv = uv * _MainTex_ST.xy + _MainTex_ST.zw;
 	float4 iris = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, uv);
 	float3 viewDir = normalize(_WorldSpaceCameraPos - i.posWS);
@@ -100,8 +106,15 @@ fixed4 frag (Varyings i) : SV_Target {
 	finalCol = lerp(HSLtoRGB(hsl), finalCol, saturate(shadowAttenuation + 0.5));
 
 	// Overlay emission over expression
-	float4 emission = GetEmission(expressionUV);
-	finalCol = finalCol * (1 - emission.a) + (emission.a * emission.rgb);
+	float2 emissionUV = uv * _EmissionMask_ST.xy + _EmissionMask_ST.zw;
+	emissionUV = rotateUV(emissionUV, float2(0.5, 0.5), -_rotation*6.28318548);
+	emissionUV = emissionUV * _MainTex_ST.xy + _MainTex_ST.zw;
+	
+	float4 emissionMask = tex2D(_EmissionMask, emissionUV);
+	float3 emissionCol =  _EmissionColor.rgb * _EmissionIntensity * emissionMask.rgb;
+	float4 emission = float4(emissionCol, emissionMask.a * _EmissionColor.a);
+	
+	finalCol = max(finalCol, 1E-06) + emission.rgb * emission.a;
 	
 	return float4(max(finalCol, 1E-06), alpha);
 }
