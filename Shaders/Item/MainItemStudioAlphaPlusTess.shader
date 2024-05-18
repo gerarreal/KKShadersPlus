@@ -194,7 +194,7 @@
 				o.shadowCoordinate.zw = projPos.zw;
 				o.shadowCoordinate.xy = projbiTan.zz + projbiTan.xw;
 			#endif
-				1111;
+				1;
 				return o;
 			}
 
@@ -258,7 +258,7 @@
 				//Sample default
 				float4 sampledDefault = SAMPLE_TEX2D(SAMPLERTEX, i.uv0);
 				
-				float mainTexAlpha = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw).a;
+				float mainTexAlpha = SAMPLE_TEX2D(_MainTex, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw).a;
 				mainTexAlpha = mainTexAlpha + sampledDefault.r * 1E-30;
 				if(mainTexAlpha * _alpha <= _Cutoff)
 					discard;

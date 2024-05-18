@@ -83,7 +83,7 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
 	_ambientshadowG = max(_ambientshadowG, 1E-06);
 	
 	//Clips based on main texture
-	float4 mainTex = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
+	float4 mainTex = SAMPLE_TEX2D(_MainTex, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
 	mainTex = mainTex + sampledDefault * 1E-30;
 	if (mainTex.a <= _Cutoff) discard;
 	
@@ -91,7 +91,7 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
 	_ShadowColor = max(_ShadowColor, 1E-06);
 #ifdef ALPHA_SHADER
 	float2 alphaUV = i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw;
-	float alphaMask = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, alphaUV).a;
+	float alphaMask = SAMPLE_TEX2D(_MainTex, alphaUV).a;
 	alpha = 1 - (1 - (alphaMask - _Cutoff + 0.0001) / (1.0001 - _Cutoff)) * floor(_AlphaOptionCutoff/2.0) - (1 - alphaMask) * (floor(_AlphaOptionCutoff) % 2);
 	if (alpha <= _Cutoff) discard;
 	alpha *= _alpha * _alpha;

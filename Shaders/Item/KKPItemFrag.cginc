@@ -24,7 +24,7 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target{
 	float4 sampledDefault = SAMPLE_TEX2D(SAMPLERTEX, i.uv0);
 	
 	//Clips based on alpha texture
-	float4 mainTex = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
+	float4 mainTex = SAMPLE_TEX2D(_MainTex, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
 	mainTex = mainTex + sampledDefault * 1E-30;
 	
 	AlphaClip(i.uv0, mainTex.a);

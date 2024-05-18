@@ -168,7 +168,7 @@
 				if(!_OutlineOn)
 					o.posCS = float4(2,2,2,1);
 				o.uv0 = v.uv0;
-				1111;
+				1;
 				return o;
 			}
 
@@ -178,7 +178,7 @@
 				float4 sampledDefault = SAMPLE_TEX2D(SAMPLERTEX, i.uv0);
 				
 				//Clips based on alpha texture
-				float4 mainTex = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
+				float4 mainTex = SAMPLE_TEX2D(_MainTex, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
 				mainTex = mainTex + sampledDefault * 1E-30;
 				AlphaClip(i.uv0,  _OutlineOn ? mainTex.a : 0);
 
@@ -357,7 +357,7 @@
 				//Sample default
 				float4 sampledDefault = SAMPLE_TEX2D(SAMPLERTEX, i.uv0);
 				
-				float mainTexAlpha = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw).a;
+				float mainTexAlpha = SAMPLE_TEX2D(_MainTex, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw).a;
 				mainTexAlpha = mainTexAlpha + sampledDefault.r * 1E-30;
 				if(mainTexAlpha <= _Cutoff)
 					discard;

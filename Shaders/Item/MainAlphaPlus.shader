@@ -143,7 +143,7 @@ Shader "xukmi/MainAlphaPlus"
 				if(!_OutlineOn)
 					o.posCS = float4(2,2,2,1);
 				o.uv0 = v.uv0;
-				11111;
+				1;
 				return o;
 			}
 
@@ -153,7 +153,7 @@ Shader "xukmi/MainAlphaPlus"
 				float4 sampledDefault = SAMPLE_TEX2D(SAMPLERTEX, i.uv0);
 				
 				//Clips based on alpha texture
-				float4 mainTex = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
+				float4 mainTex = SAMPLE_TEX2D(_MainTex, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
 				mainTex = mainTex + sampledDefault * 1E-30;
 				AlphaClip(i.uv0, _OutlineOn ? mainTex.a * _Alpha : 0);
 
@@ -327,7 +327,7 @@ Shader "xukmi/MainAlphaPlus"
 				float2 alphaUV = i.uv0 * _AlphaMask_ST.xy + _AlphaMask_ST.zw;
 				float4 alphaMask = SAMPLE_TEX2D_SAMPLER(_AlphaMask, SAMPLERTEX, alphaUV);
 				float2 alphaVal = -float2(_alpha_a, _alpha_b) + float2(1.0f, 1.0f);
-				float mainTexAlpha = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw).a;
+				float mainTexAlpha = SAMPLE_TEX2D(_MainTex, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw).a;
 				mainTexAlpha = mainTexAlpha + sampledDefault.r * 1E-30;
 				alphaVal = max(alphaVal, alphaMask.xy);
 				alphaVal = min(alphaVal.y, alphaVal.x);
