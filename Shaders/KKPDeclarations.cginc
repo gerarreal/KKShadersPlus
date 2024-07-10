@@ -1,4 +1,6 @@
-﻿#ifndef KKP_DECLARATIONS
+﻿// (?<=\s{3})1+(?=;$)
+
+#ifndef KKP_DECLARATIONS
 #define KKP_DECLARATIONS
 
 #define DECLARE_TEX2D(tex) Texture2D tex; SamplerState sampler##tex

@@ -1,7 +1,7 @@
 fixed4 frag (Varyings i) : SV_Target
 {
 
-	float4 mainTex = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
+	float4 mainTex = SAMPLE_TEX2D(_MainTex, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
 	float alpha = mainTex.a - _Cutoff;
 
 	//Because of the stencil the shader needs to alpha cilp otherwise the whole mesh shows over the hair
@@ -51,13 +51,13 @@ fixed4 frag (Varyings i) : SV_Target
 #ifdef VERTEXLIGHT_ON
 	vertexLighting = GetVertexLighting(vertexLights, i.normalWS);
 	float2 vertexLightRampUV = vertexLighting.a * _RampG_ST.xy + _RampG_ST.zw;
-	vertexLightRamp = tex2D(_RampG, vertexLightRampUV).x;
+	vertexLightRamp = SAMPLE_TEX2D(_RampG, vertexLightRampUV).x;
 	float3 rampLighting = GetRampLighting(vertexLights, i.normalWS, vertexLightRamp);
 	vertexLighting.rgb = _UseRampForLights ? rampLighting : vertexLighting.rgb;
 #endif
 
 	float lambert =	dot(_WorldSpaceLightPos0.xyz, i.normalWS.xyz) + vertexLighting.a;;
-	float ramp = tex2D(_RampG, lambert * _RampG_ST.xy + _RampG_ST.zw);
+	float ramp = SAMPLE_TEX2D(_RampG, lambert * _RampG_ST.xy + _RampG_ST.zw);
 	finalCol = ramp * finalCol + shadedDiffuse;
 	
 	float shadowAttenuation = saturate(ramp);

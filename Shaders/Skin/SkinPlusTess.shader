@@ -133,7 +133,7 @@
 				float lineVal = _linewidthG * 0.00499999989;
 				viewVal *= lineVal * _LineWidthS;
 				float2 detailMaskUV = v.uv0 * _DetailMask_ST.xy + _DetailMask_ST.zw;
-				float4 detailMask = tex2Dlod(_DetailMask, float4(detailMaskUV, 0, 0));
+				float4 detailMask = SAMPLE_TEX2D_LOD(_DetailMask, float4(detailMaskUV, 0, 0), 0);
 				float detailB = 1 - detailMask.b;
 				viewVal *= detailB;
 				float3 invertSquare;
@@ -168,7 +168,7 @@
 
 			fixed4 frag (Varyings i, int frontFace : VFACE) : SV_Target
 			{
-				float4 samplerTex = SAMPLE_TEX2D(SAMPLERTEX, float2(0,0));
+
 				
 				//Defined in Diffuse.cginc
 				AlphaClip(i.uv0, _OutlineOn ? 1 : 0);	
@@ -203,7 +203,7 @@
 				}
 				float3 finalDiffuse = diffuse * u_xlat1;
 				float2 detailMaskUV = i.uv0 * _DetailMask_ST.xy + _DetailMask_ST.zw;
-				float4 detailMask = tex2D(_DetailMask, detailMaskUV);
+				float4 detailMask = SAMPLE_TEX2D(_DetailMask, detailMaskUV);
 
 				float detailGInv = 1 - detailMask.g;
 				detailGInv = detailGInv * 0.5 + 0.5;
@@ -222,7 +222,7 @@
 
 				float3 finalColor = finalDiffuse * outLineCol;
 				finalColor = lerp(finalColor, _OutlineColor.rgb, _OutlineColor.a);
-				return float4(max(finalColor, 1e-06 - samplerTex.a * 1.2e-38), 1.0);
+				return float4(max(finalColor, 1e-06), 1.0);
 			}
 
 			
@@ -360,9 +360,9 @@
 			#include "KKPTess.cginc"
             float4 frag(v2f i) : SV_Target
             {
-				float4 samplerTex = SAMPLE_TEX2D(SAMPLERTEX, float2(0,0));
-				float2 alphaUV = i.uv0 * _AlphaMask_ST.xy + _AlphaMask_ST.zw + samplerTex*1.2e-38;
-				float4 alphaMask = SAMPLE_TEX2D_SAMPLER(_AlphaMask, SAMPLERTEX, alphaUV);
+
+				float2 alphaUV = i.uv0 * _AlphaMask_ST.xy + _AlphaMask_ST.zw;
+				float4 alphaMask = SAMPLE_TEX2D(_AlphaMask, alphaUV);
 				float2 alphaVal = -float2(_alpha_a, _alpha_b) + float2(1.0f, 1.0f);
 				alphaVal = max(alphaVal, alphaMask.xy);
 				alphaVal = min(alphaVal.y, alphaVal.x);

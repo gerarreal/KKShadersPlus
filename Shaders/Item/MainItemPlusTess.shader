@@ -2,8 +2,6 @@
 {
 	Properties
 	{
-		_DefaultTex ("Default Texture For Sampling", 2D) = "black" {}
-		
 		_AnotherRamp ("Another Ramp(LineR)", 2D) = "white" {}
 		_MainTex ("MainTex", 2D) = "white" {}
 		_NormalMap ("Normal Map", 2D) = "bump" {}
@@ -134,7 +132,7 @@
 				float lineVal = _linewidthG * 0.00499999989;
 				viewVal *= lineVal;
 				float2 detailMaskUV = v.uv0 * _DetailMask_ST.xy + _DetailMask_ST.zw;
-				float4 detailMask = tex2Dlod(_DetailMask, float4(detailMaskUV, 0, 0));
+				float4 detailMask = SAMPLE_TEX2D_LOD(_DetailMask, float4(detailMaskUV, 0, 0), 0);
 				float detailB = 1 - detailMask.b;
 				viewVal *= detailB * _LineWidthS;
 				float3 invertSquare;
@@ -168,19 +166,15 @@
 
 			fixed4 outlineFrag (Varyings i) : SV_Target
 			{
-				//Sample default
-				float4 sampledDefault = SAMPLE_TEX2D(SAMPLERTEX, i.uv0);
-				
 				//Clips based on alpha texture
 				float4 mainTex = SAMPLE_TEX2D(_MainTex, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
-				mainTex = mainTex + sampledDefault * 1E-30;
 				AlphaClip(i.uv0,  _OutlineOn ? mainTex.a : 0);
 
 				float3 worldLightPos = normalize(_WorldSpaceLightPos0.xyz);
 				float3 viewDir = normalize(_WorldSpaceCameraPos.xyz - i.posWS);
 				float3 halfDir = normalize(viewDir + worldLightPos);
 
-				float4 colorMask = SAMPLE_TEX2D_SAMPLER(_ColorMask, SAMPLERTEX, i.uv0 * + _ColorMask_ST.xy + _ColorMask_ST.zw);
+				float4 colorMask = SAMPLE_TEX2D(_ColorMask, i.uv0 * + _ColorMask_ST.xy + _ColorMask_ST.zw);
 				float3 color;
 				color = colorMask.r * (_Color.rgb - 1) + 1;
 				color = colorMask.g * (_Color2.rgb - color) + color;
@@ -200,19 +194,19 @@
 				rotatedDetailUV.y = dot(detailUVAdjust, rotVal.xy);
 				rotatedDetailUV += _Clock.xy;
 				rotatedDetailUV = rotatedDetailUV * _LineMask_ST.xy + _LineMask_ST.zw;
-				float4 lineMaskRot = SAMPLE_TEX2D_SAMPLER(_LineMask, _LineMask, rotatedDetailUV);
+				float4 lineMaskRot = SAMPLE_TEX2D_SAMPLER(_LineMask, _DetailMask, rotatedDetailUV);
 
 				diffuse = lineMaskRot.b * -diffuse + diffuse;
 				float3 shadingAdjustment = ShadeAdjustItem(diffuse);
 
 				float2 detailUV = i.uv0 * _DetailMask_ST.xy + _DetailMask_ST.zw;
-				float4 detailMask = tex2D(_DetailMask, detailUV);
+				float4 detailMask = SAMPLE_TEX2D(_DetailMask, detailUV);
 				
 				float specularMap = _UseDetailRAsSpecularMap ? detailMask.r : 1;
 				_SpecularPower *= specularMap;
 
 				float2 lineMaskUV = i.uv0 * _LineMask_ST.xy + _LineMask_ST.zw;
-				float4 lineMask = SAMPLE_TEX2D_SAMPLER(_LineMask, _LineMask, lineMaskUV);
+				float4 lineMask = SAMPLE_TEX2D_SAMPLER(_LineMask, _DetailMask, lineMaskUV);
 				lineMask.r = _DetailRLineR * (detailMask.r - lineMask.r) + lineMask.r;
 
 				float3 diffuseShaded = shadingAdjustment * 0.899999976 - 0.5;
@@ -391,14 +385,10 @@
 
             float4 shadowFrag(v2f i) : SV_Target
             {
-				//Sample default
-				float4 sampledDefault = SAMPLE_TEX2D(SAMPLERTEX, i.uv0);
-				
 				float2 alphaUV = i.uv0 * _AlphaMask_ST.xy + _AlphaMask_ST.zw;
-				float4 alphaMask = SAMPLE_TEX2D_SAMPLER(_AlphaMask, SAMPLERTEX, alphaUV);
+				float4 alphaMask = SAMPLE_TEX2D(_AlphaMask, alphaUV);
 				float2 alphaVal = -float2(_alpha_a, _alpha_b) + float2(1.0f, 1.0f);
 				float mainTexAlpha = SAMPLE_TEX2D(_MainTex, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw).a;
-				mainTexAlpha = mainTexAlpha + sampledDefault.r * 1E-30;
 				alphaVal = max(alphaVal, alphaMask.xy);
 				alphaVal = min(alphaVal.y, alphaVal.x);
 				alphaVal *= mainTexAlpha;

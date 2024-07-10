@@ -54,19 +54,15 @@ float3x3 AngleAxis3x3(float angle, float3 axis) {
 }
 
 fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
-	//Default sampling
-	float4 sampledDefault = SAMPLE_TEX2D(SAMPLERTEX, i.uv0);
-	
 	//Clips based on alpha texture
 	float4 mainTex = SAMPLE_TEX2D(_MainTex, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
-	mainTex = mainTex + sampledDefault * 1E-30;
 	AlphaClip(i.uv0, mainTex.a);
 
 	float3 worldLightPos = normalize(_WorldSpaceLightPos0.xyz);
 	float3 viewDir = normalize(_WorldSpaceCameraPos.xyz - i.posWS);
 	float3 halfDir = normalize(viewDir + worldLightPos);
 
-	float4 colorMask = SAMPLE_TEX2D_SAMPLER(_ColorMask, SAMPLERTEX, i.uv0 * + _ColorMask_ST.xy + _ColorMask_ST.zw);
+	float4 colorMask = SAMPLE_TEX2D(_ColorMask, i.uv0 * + _ColorMask_ST.xy + _ColorMask_ST.zw);
 	float3 color;
 	color = colorMask.r * (_Color.rgb - 1) + 1;
 	color = colorMask.g * (_Color2.rgb - color) + color;
@@ -99,15 +95,15 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
 	rotatedDetailUV.y = dot(detailUVAdjust, rotVal.xy);
 	rotatedDetailUV += _Clock.xy;
 	rotatedDetailUV = rotatedDetailUV * _LineMask_ST.xy + _LineMask_ST.zw;
-	float4 lineMaskRot = SAMPLE_TEX2D_SAMPLER(_LineMask, _LineMask, rotatedDetailUV);
+	float4 lineMaskRot = SAMPLE_TEX2D_SAMPLER(_LineMask, _DetailMask, rotatedDetailUV);
 
 	diffuse = lineMaskRot.b * -diffuse + diffuse;
 	float3 shadingAdjustment = ShadeAdjustItem(diffuse);
 
 	float2 detailUV = i.uv0 * _DetailMask_ST.xy + _DetailMask_ST.zw;
-	float4 detailMask = tex2D(_DetailMask, detailUV);
+	float4 detailMask = SAMPLE_TEX2D(_DetailMask, detailUV);
 	float2 lineMaskUV = i.uv0 * _LineMask_ST.xy + _LineMask_ST.zw;
-	float4 lineMask = SAMPLE_TEX2D_SAMPLER(_LineMask, _LineMask, lineMaskUV);
+	float4 lineMask = SAMPLE_TEX2D_SAMPLER(_LineMask, _DetailMask, lineMaskUV);
 	lineMask.r = _DetailRLineR * (detailMask.r - lineMask.r) + lineMask.r;
 
 	float3 diffuseShaded = shadingAdjustment * 0.899999976 - 0.5;
@@ -163,14 +159,14 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
 #ifdef VERTEXLIGHT_ON
 	vertexLighting = GetVertexLighting(vertexLights, normal);
 	float2 vertexLightRampUV = vertexLighting.a * _RampG_ST.xy + _RampG_ST.zw;
-	vertexLightRamp = tex2D(_RampG, vertexLightRampUV).x;
+	vertexLightRamp = SAMPLE_TEX2D(_RampG, vertexLightRampUV).x;
 	float3 rampLighting = GetRampLighting(vertexLights, normal, vertexLightRamp);
 	vertexLighting.rgb = _UseRampForLights ? rampLighting : vertexLighting.rgb;
 #endif
 	float lambert = dot(_WorldSpaceLightPos0.xyz, normal);
 	lambert = max(lambert, vertexLighting.a);
 	float2 rampUV = lambert * _RampG_ST.xy + _RampG_ST.zw;
-	float ramp = tex2D(_RampG, rampUV);
+	float ramp = SAMPLE_TEX2D(_RampG, rampUV);
 
 	float fresnel = max(dot(normal, viewDir), 0.0);
 	fresnel = log2(1 - fresnel);
@@ -188,7 +184,7 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
 	}
 #endif
 	float2 anotherRampUV = max(specular, anotherRampSpecularVertex) * _AnotherRamp_ST.xy + _AnotherRamp_ST.zw;
-	float anotherRamp = tex2D(_AnotherRamp, anotherRampUV);
+	float anotherRamp = SAMPLE_TEX2D(_AnotherRamp, anotherRampUV);
 	specular = log2(specular);
 	anotherRamp -= ramp;
 	float finalRamp = kkMetal * anotherRamp + ramp;
@@ -212,7 +208,7 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
 	detailSpecularOffset.y = dot(i.bitanWS, viewDir);
 	float2 detailMaskUV2 = specularHeight * detailSpecularOffset + i.uv0;
 	detailMaskUV2 = detailMaskUV2 * _DetailMask_ST.xy + _DetailMask_ST.zw;
-	float drawnSpecular = tex2D(_DetailMask, detailMaskUV2).x;
+	float drawnSpecular = SAMPLE_TEX2D(_DetailMask, detailMaskUV2).x;
 	float drawnSpecularSquared = min(drawnSpecular * drawnSpecular, 1.0);
 
 	_SpecularPower *= _UseDetailRAsSpecularMap ? detailMask.x : 1;
@@ -223,7 +219,7 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
 	drawnSpecular = saturate(specular * _SpecularPower + drawnSpecularSquared);
 #ifdef KKP_EXPENSIVE_RAMP
 	float2 lightRampUV = specular * _RampG_ST.xy + _RampG_ST.zw;
-	specular = tex2D(_RampG, lightRampUV) * _UseRampForSpecular + specular * (1 - _UseRampForSpecular);
+	specular = SAMPLE_TEX2D(_RampG, lightRampUV) * _UseRampForSpecular + specular * (1 - _UseRampForSpecular);
 #endif
 	specular = saturate(specular * _SpecularPower);
 	specular = specular - drawnSpecular;
@@ -296,12 +292,12 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
 	float alpha = 1;
 	#ifdef ALPHA_SHADER
 	float2 maskUV = i.uv0 * _AlphaMask_ST.xy + _AlphaMask_ST.zw;
-	float alphaMask = SAMPLE_TEX2D_SAMPLER(_AlphaMask, SAMPLERTEX, maskUV).r;
+	float alphaMask = SAMPLE_TEX2D(_AlphaMask, maskUV).r;
 	alphaMask = 1 - (1 - (alphaMask - _Cutoff + 0.0001) / (1.0001 - _Cutoff)) * floor(_AlphaOptionCutoff/2.0);
 	alpha = mainTex.a * _Alpha * alphaMask;
 	
 	if (alpha <= 0) discard;
 	#endif
 
-	return float4(max(finalDiffuse, max(sampledDefault.r, 1E-06)), alpha);
+	return float4(max(finalDiffuse, 1E-06), alpha);
 }

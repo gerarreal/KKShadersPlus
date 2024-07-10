@@ -143,8 +143,7 @@
 
 			#include "UnityCG.cginc"
 
-			sampler2D _MainTex;
-			float4 _MainTex_ST;
+			#include "KKPEyeInput.cginc"
 
             struct v2f { 
 				float2 uv0 : TEXCOORD1;
@@ -162,7 +161,7 @@
             float4 frag(v2f i) : SV_Target
             {
 
-				float4 mainTex = tex2D(_MainTex, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
+				float4 mainTex = SAMPLE_TEX2D(_MainTex, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
 				float alphaVal = mainTex.a;
 				float clipVal = (alphaVal.x - 0.5) < 0.0f;
 				if(clipVal * int(0xffffffffu) != 0)

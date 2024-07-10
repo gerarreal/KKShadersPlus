@@ -11,7 +11,7 @@ float GetShadowAttenuation(Varyings i, float vertexLightingShadowAtten, float3 n
 	//Normal adjustment for the face I suppose it keeps the face more lit?
 	float3 viewNorm = viewDir - normal;
 	float2 normalMaskUV = i.uv0 * _NormalMask_ST.xy + _NormalMask_ST.zw;
-	float3 normalMask = tex2D(_NormalMask, normalMaskUV).rgb;
+	float3 normalMask = SAMPLE_TEX2D(_NormalMask, normalMaskUV).rgb;
 	normalMask.xy = normalMask.yz * float2(_FaceNormalG, _FaceShadowG);
 	viewNorm = normalMask.x * viewNorm + normal;
 	float maskG = max(normalMask.g, 1.0);
@@ -32,7 +32,7 @@ float GetShadowAttenuation(Varyings i, float vertexLightingShadowAtten, float3 n
     float vertexShadows = vertexLightingShadowAtten;
 	float blendShadows = max(vertexShadows, lambertShadows);
 	float2 rampUV = blendShadows * _RampG_ST.xy + _RampG_ST.zw;
-	float ramp = tex2D(_RampG, rampUV).x * rampAtten;
+	float ramp = SAMPLE_TEX2D(_RampG, rampUV).x * rampAtten;
 
 
 

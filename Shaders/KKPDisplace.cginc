@@ -1,7 +1,7 @@
 ﻿#ifndef KKP_DISPLACE_INC
 #define KKP_DISPLACE_INC
 
-sampler2D _DisplaceTex;
+DECLARE_TEX2D(_DisplaceTex);
 float4 _DisplaceTex_ST;
 float4 _DisplaceTex_TexelSize;
 float _DisplaceMultiplier;
@@ -29,7 +29,7 @@ float2 rotateUV(float2 uv, float2 pivot, float rotation) {
 }
 
 float DisplaceVal(float2 uv, float2 offset, float2 texelSize){
-	float4 displaceTex = tex2Dlod(_DisplaceTex, float4(uv, 0, 0) + float4(texelSize * offset, 0, 0));
+	float4 displaceTex = SAMPLE_TEX2D_LOD(_DisplaceTex, float4(uv, 0, 0) + float4(texelSize * offset, 0, 0), 0);
 	float displaceVal = displaceTex.r;
 	//Gamma correction
 	displaceVal = pow(displaceVal, 0.454545);
@@ -45,7 +45,7 @@ float DisplaceVal(float2 uv, float2 offset, float2 texelSize){
 	return displaceVal * displacementAnimation;
 }
 
-float3 normalsFromHeight(sampler2D heightTex, float2 uv, float2 texelSize)
+float3 normalsFromHeight(float2 uv, float2 texelSize)
 {
     float4 h;
 	h[0] = DisplaceVal(uv, float2( 0,-1), texelSize);
@@ -72,7 +72,7 @@ void DisplacementValues(VertexData v, inout float4 vertex, inout float3 normal){
 	float3 displace = DisplaceVal(displaceUV + _Clock.xy, 0, 0);
 #endif
 #ifndef SHADOW_CASTER_PASS
-	float3 bumpnormal = normalsFromHeight(_DisplaceTex, displaceUV, _DisplaceTex_TexelSize.xy);
+	float3 bumpnormal = normalsFromHeight(displaceUV, _DisplaceTex_TexelSize.xy);
 	bumpnormal.xyz = bumpnormal.xzy;
 	float3 mergedNormals = BlendNormals(normal, bumpnormal);
 	normal = mergedNormals;

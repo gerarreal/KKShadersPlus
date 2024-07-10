@@ -1,8 +1,8 @@
 ﻿#ifndef KKP_HAIR_REFLECT
 #define KKP_HAIR_REFLECT
-sampler2D _ReflectMap;
+DECLARE_TEX2D(_ReflectMap);
 float4 _ReflectMap_ST;
-sampler2D _ReflectionMapCap;
+DECLARE_TEX2D(_ReflectionMapCap);
 float4 _ReflectionMapCap_ST;
 float _Roughness;
 float _ReflectionVal;
@@ -14,7 +14,7 @@ float4 _ReflectCol;
 float _ReflectColMix;
 
 float _ReflectRotation;
-sampler2D _ReflectMask;
+DECLARE_TEX2D(_ReflectMask);
 float4 _ReflectMask_ST;
 
 #ifndef ROTATEUV
@@ -31,16 +31,16 @@ float2 rotateUV(float2 uv, float2 pivot, float rotation) {
 
 fixed4 reflectfrag (Varyings i) : SV_Target
 {
-	float4 samplerTex = SAMPLE_TEX2D(SAMPLERTEX, float2(0,0));
+
 	
-	float4 mainTex = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
+	float4 mainTex = SAMPLE_TEX2D(_MainTex, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
 	AlphaClip(i.uv0, mainTex.a);
 	
 	float3 viewDir = normalize(_WorldSpaceCameraPos - i.posWS);
 	float3 worldLight = normalize(_WorldSpaceLightPos0.xyz); //Directional light
 
 	float2 normalUV = i.uv0 * _NormalMap_ST.xy + _NormalMap_ST.zw;
-	float3 normalMatcap = UnpackScaleNormal(SAMPLE_TEX2D_SAMPLER(_NormalMap, SAMPLERTEX, normalUV), _NormalMapScale);
+	float3 normalMatcap = UnpackScaleNormal(SAMPLE_TEX2D(_NormalMap, normalUV), _NormalMapScale);
 
 	float3 binormal = CreateBinormal(i.normalWS, i.tanWS.xyz, i.tanWS.w);
 	normalMatcap = normalize(
@@ -52,7 +52,7 @@ fixed4 reflectfrag (Varyings i) : SV_Target
 
 	
 	float fresnel = max(0.0, dot(viewDir, adjustedNormal));
-	float anotherRamp = tex2D(_AnotherRamp, fresnel * _AnotherRamp_ST.xy + _AnotherRamp_ST.zw).x;
+	float anotherRamp = SAMPLE_TEX2D(_AnotherRamp, fresnel * _AnotherRamp_ST.xy + _AnotherRamp_ST.zw).x;
 	
 	KKVertexLight vertexLights[4];
 #ifdef VERTEXLIGHT_ON
@@ -63,13 +63,13 @@ fixed4 reflectfrag (Varyings i) : SV_Target
 #ifdef VERTEXLIGHT_ON
 	vertexLighting = GetVertexLighting(vertexLights, adjustedNormal);
 	float2 vertexLightRampUV = vertexLighting.a * _RampG_ST.xy + _RampG_ST.zw;
-	vertexLightRamp = tex2D(_RampG, vertexLightRampUV).x;
+	vertexLightRamp = SAMPLE_TEX2D(_RampG, vertexLightRampUV).x;
 	float3 rampLighting = GetRampLighting(vertexLights, adjustedNormal, vertexLightRamp);
 	vertexLighting.rgb = _UseRampForLights ? rampLighting : vertexLighting.rgb;
 #endif
 
 	float lambert = saturate(dot(worldLight, adjustedNormal)) + vertexLighting.a;
-	float ramp = tex2D(_RampG, lambert * _RampG_ST.xy + _RampG_ST.zw).x;
+	float ramp = SAMPLE_TEX2D(_RampG, lambert * _RampG_ST.xy + _RampG_ST.zw).x;
 	float shadowAttenuation = saturate(min(ramp, anotherRamp));
 	#ifdef SHADOWS_SCREEN
 		float2 shadowMapUV = i.shadowCoordinate.xy / i.shadowCoordinate.ww;
@@ -77,14 +77,14 @@ fixed4 reflectfrag (Varyings i) : SV_Target
 		shadowAttenuation *= shadowMap;
 	#endif
 	
-	float4 detailMask = tex2D(_DetailMask, i.uv0 * _DetailMask_ST.xy + _DetailMask_ST.zw);
+	float4 detailMask = SAMPLE_TEX2D(_DetailMask, i.uv0 * _DetailMask_ST.xy + _DetailMask_ST.zw);
 	float2 invertDetailGB = 1 - detailMask.gb;
 	float matcapAttenuation = shadowAttenuation * invertDetailGB.x;
 	matcapAttenuation = 1 - (1 - matcapAttenuation)*_DisableShadowedMatcap;
 
 	float3 normal = GetNormal(i);
 	normal = NormalAdjust(i, normal);
-	float reflectMap = tex2D(_ReflectMap, (i.uv0 *_ReflectMap_ST.xy) + _ReflectMap_ST.zw).r;
+	float reflectMap = SAMPLE_TEX2D(_ReflectMap, (i.uv0 *_ReflectMap_ST.xy) + _ReflectMap_ST.zw).r;
 
 
 	float3 reflectionDir = reflect(-viewDir, normal);
@@ -96,9 +96,9 @@ fixed4 reflectfrag (Varyings i) : SV_Target
 	float3 viewNormal = mul((float3x3)UNITY_MATRIX_V, normal);
 	float2 matcapUV = viewNormal.xy * 0.5 * _ReflectionMapCap_ST.xy + 0.5 + _ReflectionMapCap_ST.zw;
 	matcapUV = rotateUV(matcapUV, float2(0.5, 0.5), radians(_ReflectRotation));
-	float reflectMask = tex2D(_ReflectMask, i.uv0 * _ReflectMask_ST.xy + _ReflectMask_ST.zw).r;
+	float reflectMask = SAMPLE_TEX2D(_ReflectMask, i.uv0 * _ReflectMask_ST.xy + _ReflectMask_ST.zw).r;
 	
-	float4 matcap = tex2D(_ReflectionMapCap, matcapUV);
+	float4 matcap = SAMPLE_TEX2D(_ReflectionMapCap, matcapUV);
 	matcap = pow(matcap, 0.454545);
 	float3 matcapRGBcolored = lerp(matcap.rgb, matcap.rgb * _ReflectCol.rgb, _ReflectColMix);
 	env = lerp(env, matcapRGBcolored, _UseMatCapReflection * reflectMask);
@@ -133,7 +133,7 @@ fixed4 reflectfrag (Varyings i) : SV_Target
 
 	float3 reflCol = lerp(env, reflectMulOrAdd, 1 - modifiedReflectionVal * matcapAttenuation * matcap.a * alphaLerp);
 
-	return float4(max(reflCol, 1E-06 - samplerTex.a * 1.2e-38), modifiedReflectionVal * reflectMap * _ReflectCol.a);
+	return float4(max(reflCol, 1E-06), modifiedReflectionVal * reflectMap * _ReflectCol.a);
 }
 
 #endif

@@ -2,8 +2,6 @@
 {
 	Properties
 	{
-		_DefaultTex ("Default Texture For Sampling", 2D) = "black" {}
-		
 		// Vanilla textures
 		_AnotherRamp ("Another Ramp(LineR)", 2D) = "white" {}
 		_ColorMask ("Color Mask", 2D) = "black" {}
@@ -214,11 +212,7 @@
 
             float4 shadowFrag(v2f i) : SV_Target
             {
-				//Sample default
-				float4 sampledDefault = SAMPLE_TEX2D(SAMPLERTEX, i.uv0);
-				
 				float mainTexAlpha = SAMPLE_TEX2D(_MainTex, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw).a;
-				mainTexAlpha = mainTexAlpha + sampledDefault.r * 1E-30;
 				if(mainTexAlpha * _alpha <= _Cutoff)
 					discard;
                 SHADOW_CASTER_FRAGMENT(i)

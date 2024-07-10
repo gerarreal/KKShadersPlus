@@ -79,7 +79,7 @@ float3 GetRampLighting(inout KKVertexLight lights[4], float3 normal, float ramp)
 	#ifdef KKP_EXPENSIVE_RAMP
 		float lighting = light.lightValNoAtten;
 		float2 lightRampUV = lighting * _RampG_ST.xy + _RampG_ST.zw;
-		float lightRamp = tex2D(_RampG, lightRampUV).x;
+		float lightRamp = SAMPLE_TEX2D(_RampG, lightRampUV).x;
 		float atten = smoothstep(0.04, 0.041, light.atten); 
 		lighting = saturate(lightRamp * atten);
 	#else

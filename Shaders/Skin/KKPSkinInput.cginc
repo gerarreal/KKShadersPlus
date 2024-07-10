@@ -2,7 +2,6 @@
 #define KKP_MAIN_INPUT
 
 #include "../KKPDeclarations.cginc"
-#define SAMPLERTEX _DefaultTex
 
 	struct VertexData
 	{
@@ -54,24 +53,21 @@
 	float4 _OutlineColor;
 
 	//KK Inputs
-	
-	DECLARE_TEX2D(_DefaultTex);
-
 	//Input Textures
-	DECLARE_TEX2D_NOSAMPLER(_MainTex);
-	DECLARE_TEX2D_NOSAMPLER(_AlphaMask);
+	DECLARE_TEX2D(_MainTex);
+	DECLARE_TEX2D(_AlphaMask);
 	DECLARE_TEX2D(_NormalMap);
 	DECLARE_TEX2D_NOSAMPLER(_NormalMapDetail);
 	DECLARE_TEX2D_NOSAMPLER(_liquidmask);
-	DECLARE_TEX2D_NOSAMPLER(_Texture2); //Liquid Tex
+	DECLARE_TEX2D(_Texture2); //Liquid Tex
 	DECLARE_TEX2D_NOSAMPLER(_Texture3); //Liquid Normal
 	DECLARE_TEX2D(_overtex1);
 	DECLARE_TEX2D(_overtex2);
 	DECLARE_TEX2D(_overtex3);
 	DECLARE_TEX2D_NOSAMPLER(_LineMask);
-	sampler2D _DetailMask;
-	sampler2D _NormalMask;
-	sampler2D _RampG;
+	DECLARE_TEX2D(_DetailMask);
+	DECLARE_TEX2D(_NormalMask);
+	DECLARE_TEX2D(_RampG);
 	//UV Offsets
 	float4 _MainTex_ST;
 	float4 _AlphaMask_ST;

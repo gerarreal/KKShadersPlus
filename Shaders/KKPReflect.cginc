@@ -11,11 +11,11 @@ float _ReflectiveMulOrAdd;
 float _ReflectiveOverlayed;
 
 float _UseMatCapReflection;
-sampler2D _ReflectionMapCap;
+DECLARE_TEX2D(_ReflectionMapCap);
 float4 _ReflectionMapCap_ST;
 
 float _ReflectRotation;
-sampler2D _ReflectMapDetail;
+DECLARE_TEX2D_NOSAMPLER(_ReflectMapDetail);
 float4 _ReflectMapDetail_ST;
 
 #ifndef ROTATEUV
@@ -32,7 +32,7 @@ float2 rotateUV(float2 uv, float2 pivot, float rotation) {
 
 float3 GetBlendReflections(Varyings i, float3 diffuse, float3 normal, float3 viewDir, float metallicMap, float lightAmount = 1){
 	_ReflectiveBlend *= _ReflectCol.a;
-	float4 reflectDetail = tex2D(_ReflectMapDetail, (i.uv0 *_ReflectMapDetail_ST.xy) + _ReflectMapDetail_ST.zw);
+	float4 reflectDetail = SAMPLE_TEX2D_SAMPLER(_ReflectMapDetail, _MainTex, (i.uv0 *_ReflectMapDetail_ST.xy) + _ReflectMapDetail_ST.zw);
 	float reflectMap = reflectDetail.r;
 	float reflectMask = reflectDetail.g;
 	
@@ -46,7 +46,7 @@ float3 GetBlendReflections(Varyings i, float3 diffuse, float3 normal, float3 vie
 	float2 matcapUV = viewNormal.xy * 0.5 * _ReflectionMapCap_ST.xy + 0.5 + _ReflectionMapCap_ST.zw;
 	matcapUV = rotateUV(matcapUV, float2(0.5, 0.5), radians(_ReflectRotation));
 	
-	float4 matcap = tex2D(_ReflectionMapCap, matcapUV);
+	float4 matcap = SAMPLE_TEX2D(_ReflectionMapCap, matcapUV);
 	matcap = pow(matcap, 0.454545) * _ReflectiveBlend;
 	env = lerp(env, matcap, _UseMatCapReflection * reflectMask);
 	env = lerp(env, env * _ReflectCol.rgb, _ReflectColMix);

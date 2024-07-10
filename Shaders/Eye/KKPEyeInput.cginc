@@ -2,7 +2,6 @@
 #define KKP_EYE_INPUT
 
 #include "../KKPDeclarations.cginc"
-#define SAMPLERTEX _MainTex
 
 	struct VertexData
 	{
@@ -35,7 +34,7 @@
 	DECLARE_TEX2D(_overtex1);
 	DECLARE_TEX2D(_overtex2);
 
-	sampler2D _RampG;
+	DECLARE_TEX2D(_RampG);
 
 	bool _UseRampForLights;
 	//UV Offsets

@@ -1,8 +1,8 @@
 ﻿#ifndef KKP_EYE_REFLECT
 #define KKP_EYE_REFLECT
-sampler2D _ReflectMap;
+DECLARE_TEX2D(_ReflectMap);
 float4 _ReflectMap_ST;
-sampler2D _ReflectionMapCap;
+DECLARE_TEX2D(_ReflectionMapCap);
 float4 _ReflectionMapCap_ST;
 float _Roughness;
 float _ReflectionVal;
@@ -14,7 +14,7 @@ float4 _ReflectCol;
 float _ReflectColMix;
 
 float _ReflectRotation;
-sampler2D _ReflectMask;
+DECLARE_TEX2D(_ReflectMask);
 float4 _ReflectMask_ST;
 
 #ifndef ROTATEUV
@@ -40,12 +40,12 @@ fixed4 reflectfrag (Varyings i) : SV_Target
 #ifdef VERTEXLIGHT_ON
 	vertexLighting = GetVertexLighting(vertexLights, i.normalWS);
 	float2 vertexLightRampUV = vertexLighting.a * _RampG_ST.xy + _RampG_ST.zw;
-	vertexLightRamp = tex2D(_RampG, vertexLightRampUV).x;
+	vertexLightRamp = SAMPLE_TEX2D(_RampG, vertexLightRampUV).x;
 	float3 rampLighting = GetRampLighting(vertexLights, i.normalWS, vertexLightRamp);
 	vertexLighting.rgb = _UseRampForLights ? rampLighting : vertexLighting.rgb;
 #endif
 	float lambert = max(dot(_WorldSpaceLightPos0.xyz, i.normalWS.xyz), 0.0) + vertexLighting.a;
-	float shadowAttenuation = saturate(tex2D(_RampG, lambert * _RampG_ST.xy + _RampG_ST.zw).x);
+	float shadowAttenuation = saturate(SAMPLE_TEX2D(_RampG, lambert * _RampG_ST.xy + _RampG_ST.zw).x);
 	#ifdef SHADOWS_SCREEN
 		float2 shadowMapUV = i.shadowCoordinate.xy / i.shadowCoordinate.ww;
 		float4 shadowMap = tex2D(_ShadowMapTexture, shadowMapUV);
@@ -61,7 +61,7 @@ fixed4 reflectfrag (Varyings i) : SV_Target
 	reflectMapUV = rotateUV(reflectMapUV, float2(0.5, 0.5), -_rotation*6.28318548);
 	reflectMapUV = reflectMapUV * _MainTex_ST.xy + _MainTex_ST.zw;
 #endif
-	float reflectMap = tex2D(_ReflectMap, reflectMapUV).r;
+	float reflectMap = SAMPLE_TEX2D(_ReflectMap, reflectMapUV).r;
 
 	float3 reflectionDir = reflect(-viewDir, normal);
 	float roughness = 1 - (_Roughness);
@@ -78,9 +78,9 @@ fixed4 reflectfrag (Varyings i) : SV_Target
 	reflectMaskUV = rotateUV(reflectMaskUV, float2(0.5, 0.5), -_rotation*6.28318548);
 	reflectMaskUV = reflectMaskUV * _MainTex_ST.xy + _MainTex_ST.zw;
 #endif
-	float reflectMask = tex2D(_ReflectMask, reflectMaskUV).r;
+	float reflectMask = SAMPLE_TEX2D(_ReflectMask, reflectMaskUV).r;
 	
-	float4 matcap = tex2D(_ReflectionMapCap, matcapUV);
+	float4 matcap = SAMPLE_TEX2D(_ReflectionMapCap, matcapUV);
 	matcap = pow(matcap, 0.454545);
 	float3 matcapRGBcolored = lerp(matcap.rgb, matcap.rgb * _ReflectCol.rgb, _ReflectColMix);
 	env = lerp(env, matcapRGBcolored, _UseMatCapReflection * reflectMask);
@@ -113,7 +113,7 @@ fixed4 reflectfrag (Varyings i) : SV_Target
 	
 	float2 mainUV = i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw;
 	
-	_ReflectionVal *= SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, mainUV).a;
+	_ReflectionVal *= SAMPLE_TEX2D(_MainTex, mainUV).a;
 
 	float3 reflCol = lerp(env, reflectMulOrAdd, 1 - _ReflectionVal * reflectMap * matcapAttenuation * matcap.a * alphaLerp);
 

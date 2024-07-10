@@ -2,7 +2,6 @@
 #define KKP_HAIR_INPUT
 
 #include "../KKPDeclarations.cginc"
-#define SAMPLERTEX _DefaultTex
 
 	struct VertexData
 	{
@@ -51,18 +50,16 @@
 	float _KKPRimAsDiffuse;
 	float _KKPRimRotateX;
 	float _KKPRimRotateY;
-	
-	DECLARE_TEX2D(_DefaultTex);
 
 	//Input Textures
 	DECLARE_TEX2D(_MainTex);
-	DECLARE_TEX2D_NOSAMPLER(_AlphaMask);
-	DECLARE_TEX2D_NOSAMPLER(_NormalMap);
-	DECLARE_TEX2D_NOSAMPLER(_ColorMask);
-	DECLARE_TEX2D_NOSAMPLER(_HairGloss);
-	sampler2D _DetailMask;
-	sampler2D _RampG;
-	sampler2D _AnotherRamp;
+	DECLARE_TEX2D(_AlphaMask);
+	DECLARE_TEX2D(_NormalMap);
+	DECLARE_TEX2D(_ColorMask);
+	DECLARE_TEX2D(_HairGloss);
+	DECLARE_TEX2D(_DetailMask);
+	DECLARE_TEX2D(_RampG);
+	DECLARE_TEX2D(_AnotherRamp);
 
 	//UV Offsets
 	float4 _MainTex_ST;
@@ -105,7 +102,7 @@
 	float _dst;
 	
 	// Required for Matcap light-masking
-	sampler2D _NormalMask;
+	DECLARE_TEX2D(_NormalMask);
 	float4 _NormalMask_ST;
 	float _FaceShadowG;
 	float _FaceNormalG;

@@ -1,9 +1,7 @@
 ﻿Shader "xukmi/MainOpaquePlusTess"
 {
 	Properties
-	{
-		_DefaultTex ("Default Texture For Sampling", 2D) = "black" {}
-		
+	{	
 		_AnotherRamp ("Another Ramp(LineR)", 2D) = "white" {}
 		_MainTex ("MainTex", 2D) = "white" {}
 		_NormalMap ("Normal Map", 2D) = "bump" {}
@@ -141,7 +139,7 @@
 				float lineVal = _linewidthG * 0.00499999989;
 				viewVal *= lineVal;
 				float2 detailMaskUV = v.uv0 * _DetailMask_ST.xy + _DetailMask_ST.zw;
-				float4 detailMask = tex2Dlod(_DetailMask, float4(detailMaskUV, 0, 0));
+				float4 detailMask = SAMPLE_TEX2D_LOD(_DetailMask, float4(detailMaskUV, 0, 0), 0);
 				float detailB = 1 - detailMask.b;
 				viewVal *= detailB * _LineWidthS;
 				float3 invertSquare;
@@ -176,12 +174,8 @@
 
 			fixed4 outlineFrag (Varyings i) : SV_Target
 			{
-				//Sample default
-				float4 sampledDefault = SAMPLE_TEX2D(SAMPLERTEX, i.uv0);
-				
 				//Clips based on alpha texture
 				float4 mainTex = SAMPLE_TEX2D(_MainTex, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
-				mainTex = mainTex + sampledDefault * 1E-30;
 				AlphaClip(i.uv0, _OutlineOn ? mainTex.a : 0);
 
 				float3 diffuse = mainTex.rgb;
@@ -212,13 +206,13 @@
 					shadingAdjustment = saturate(hlslcc_movcTemp);
 				}
 				float2 detailMaskUV = i.uv0 * _DetailMask_ST.xy + _DetailMask_ST.zw;
-				float4 detailMask = tex2D(_DetailMask, detailMaskUV);
+				float4 detailMask = SAMPLE_TEX2D(_DetailMask, detailMaskUV);
 
 				float specularMap = _UseDetailRAsSpecularMap ? detailMask.r : 1;
 				_SpecularPower *= specularMap;
 
 				float2 lineMaskUV = i.uv0 * _LineMask_ST.xy + _LineMask_ST.zw;
-				float4 lineMask = SAMPLE_TEX2D_SAMPLER(_LineMask, _LineMask, lineMaskUV);
+				float4 lineMask = SAMPLE_TEX2D_SAMPLER(_LineMask, _DetailMask, lineMaskUV);
 
 				float detailLine = detailMask.x - lineMask.x;
 				detailLine = _DetailRLineR * detailLine + lineMask;
@@ -375,14 +369,10 @@
 			#include "KKPItemTess.cginc"
             float4 shadowFrag(v2f i) : SV_Target
             {
-				//Sample default
-				float4 sampledDefault = SAMPLE_TEX2D(SAMPLERTEX, i.uv0);
-				
 				float2 alphaUV = i.uv0 * _AlphaMask_ST.xy + _AlphaMask_ST.zw;
-				float4 alphaMask = SAMPLE_TEX2D_SAMPLER(_AlphaMask, SAMPLERTEX, alphaUV);
+				float4 alphaMask = SAMPLE_TEX2D(_AlphaMask, alphaUV);
 				float2 alphaVal = -float2(_alpha_a, _alpha_b) + float2(1.0f, 1.0f);
 				float mainTexAlpha = SAMPLE_TEX2D(_MainTex, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw).a;
-				mainTexAlpha = mainTexAlpha + sampledDefault.r * 1E-30;
 				alphaVal = max(alphaVal, alphaMask.xy);
 				alphaVal = min(alphaVal.y, alphaVal.x);
 				alphaVal *= mainTexAlpha;

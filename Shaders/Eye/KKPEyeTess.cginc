@@ -35,7 +35,7 @@ TessellationControlPoint TessVert(VertexData v){
     return p;
 }
 
-sampler2D _TessTex;
+DECLARE_TEX2D(_TessTex);
 float _TessMax;
 float _TessMin;
 float _TessBias;
@@ -94,7 +94,7 @@ float EdgeTessellationFactor(float3 p0PositionWS, float2 p0UV, float3 p1Position
 	tessUV = rotateUV(tessUV, float2(0.5, 0.5), -_rotation*6.28318548);
 #endif
 	
-    float tessTex = tex2Dlod(_TessTex, float4(tessUV, 0, 0)).x;
+    float tessTex = SAMPLE_TEX2D_LOD(_TessTex, float4(tessUV, 0, 0), 0).x;
     float factor = length / (distanceToCamera * distanceToCamera);
     factor = min(_TessMax, factor);
     float multiplier = 1.0;

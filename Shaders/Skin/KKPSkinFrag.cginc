@@ -20,7 +20,7 @@ float3x3 AngleAxis3x3(float angle, float3 axis)
 
 fixed4 frag (Varyings i, int frontFace : VFACE) : SV_Target
 {
-	float4 samplerTex = SAMPLE_TEX2D(SAMPLERTEX, float2(0,0));
+
 	
 	//Clips based on alpha texture
 	AlphaClip(i.uv0, 1);
@@ -55,14 +55,14 @@ fixed4 frag (Varyings i, int frontFace : VFACE) : SV_Target
 	//Blue 	:  Something with rim light
 	//Alpha : Specular Intensity, Black = Nails White = body
 	float2 detailMaskUV = i.uv0 * _DetailMask_ST.xy + _DetailMask_ST.zw;
-	float4 detailMask = tex2D(_DetailMask, detailMaskUV);
+	float4 detailMask = SAMPLE_TEX2D(_DetailMask, detailMaskUV);
 
 	float specularMap = _UseDetailRAsSpecularMap ? detailMask.r : 1;
 	_SpecularPower *= specularMap;
 	detailMask.xyz = 1 - detailMask.ywz;
 
 	float2 lineMaskUV = i.uv0 * _LineMask_ST.xy + _LineMask_ST.zw;
-	float4 lineMask = SAMPLE_TEX2D_SAMPLER(_LineMask, SAMPLERTEX, lineMaskUV);
+	float4 lineMask = SAMPLE_TEX2D_SAMPLER(_LineMask, _DetailMask, lineMaskUV);
 	lineMask.xz = -lineMask.zx * _DetailNormalMapScale + 1;
 
 
@@ -89,7 +89,7 @@ fixed4 frag (Varyings i, int frontFace : VFACE) : SV_Target
 #ifdef VERTEXLIGHT_ON
 	vertexLighting = GetVertexLighting(vertexLights, normal);
 	float2 vertexLightRampUV = vertexLighting.a * _RampG_ST.xy + _RampG_ST.zw;
-	vertexLightRamp = tex2D(_RampG, vertexLightRampUV).x;
+	vertexLightRamp = SAMPLE_TEX2D(_RampG, vertexLightRampUV).x;
 	float3 rampLighting = GetRampLighting(vertexLights, normal, vertexLightRamp);
 	vertexLighting.rgb = _UseRampForLights ? rampLighting : vertexLighting.rgb;
 #endif
@@ -208,7 +208,7 @@ fixed4 frag (Varyings i, int frontFace : VFACE) : SV_Target
 	float4 emission = GetEmission(i.uv0);
 	finalCol = finalCol * (1 - emission.a) + (emission.a*emission.rgb);
 
-	return float4(max(finalCol,1E-06 - samplerTex.a * 1.2e-38), 1); 
+	return float4(max(finalCol, 1E-06), 1); 
 }
 
 

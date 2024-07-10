@@ -67,11 +67,11 @@ float3x3 AngleAxis3x3(float angle, float3 axis)
 
 fixed4 frag (Varyings i, int frontFace : VFACE) : SV_Target
 {
-	float4 samplerTex = SAMPLE_TEX2D(SAMPLERTEX, float2(0,0));
+
 	
 	float3 viewDir = normalize(_WorldSpaceCameraPos - i.posWS);
 	float3 worldLight = normalize(_WorldSpaceLightPos0.xyz); //Directional light
-	float4 mainTex = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
+	float4 mainTex = SAMPLE_TEX2D(_MainTex, i.uv0 * _MainTex_ST.xy + _MainTex_ST.zw);
 	float alpha = AlphaClip(i.uv0, mainTex.a);
 	float3 diffuse = GetDiffuse(i.uv0) * mainTex.rgb;
 
@@ -93,7 +93,7 @@ fixed4 frag (Varyings i, int frontFace : VFACE) : SV_Target
 	float3 kkpFresCol = kkpFres * _KKPRimColor + (1 - kkpFres) * diffuse;
 	
 	float fresnel = max(0.0, dot(viewDir, adjustedNormal));
-	float anotherRamp = tex2D(_AnotherRamp, fresnel * _AnotherRamp_ST.xy + _AnotherRamp_ST.zw).x;
+	float anotherRamp = SAMPLE_TEX2D(_AnotherRamp, fresnel * _AnotherRamp_ST.xy + _AnotherRamp_ST.zw).x;
 	fresnel = 1 - fresnel;
 	fresnel = log2(fresnel);
 	float rimPow = _rimpower * 9.0 + 1.0;
@@ -113,7 +113,7 @@ fixed4 frag (Varyings i, int frontFace : VFACE) : SV_Target
 #ifdef VERTEXLIGHT_ON
 	vertexLighting = GetVertexLighting(vertexLights, adjustedNormal);
 	float2 vertexLightRampUV = vertexLighting.a * _RampG_ST.xy + _RampG_ST.zw;
-	vertexLightRamp = tex2D(_RampG, vertexLightRampUV).x;
+	vertexLightRamp = SAMPLE_TEX2D(_RampG, vertexLightRampUV).x;
 	float3 rampLighting = GetRampLighting(vertexLights, adjustedNormal, vertexLightRamp);
 	vertexLighting.rgb = _UseRampForLights ? rampLighting : vertexLighting.rgb;
 #endif
@@ -131,7 +131,7 @@ fixed4 frag (Varyings i, int frontFace : VFACE) : SV_Target
 
 #ifdef KKP_EXPENSIVE_RAMP
 	float2 lightRampUV = specularPowerMesh * _RampG_ST.xy + _RampG_ST.zw;
-	specularPowerMesh = tex2D(_RampG, lightRampUV) * _UseRampForSpecular + specularPowerMesh * (1 - _UseRampForSpecular);
+	specularPowerMesh = SAMPLE_TEX2D(_RampG, lightRampUV) * _UseRampForSpecular + specularPowerMesh * (1 - _UseRampForSpecular);
 #endif
 
 	float3 specularLightColor = _UseLightColorSpecular ? _LightColor0.rgb * _SpecularColor.a: _SpecularColor.rgb * _SpecularColor.a;
@@ -147,7 +147,7 @@ fixed4 frag (Varyings i, int frontFace : VFACE) : SV_Target
 	float3 specularColor = specularColorMesh.rgb; //Color
 
 	float lambert = saturate(dot(worldLight, adjustedNormal)) + vertexLighting.a;
-	float ramp = tex2D(_RampG, lambert * _RampG_ST.xy + _RampG_ST.zw).x;
+	float ramp = SAMPLE_TEX2D(_RampG, lambert * _RampG_ST.xy + _RampG_ST.zw).x;
 	float bitanFres = dot(viewDir, i.bitanWS);
 	float specularHeight = _SpeclarHeight - 1.0;
 	float3 hairGlossVal;
@@ -164,8 +164,8 @@ fixed4 frag (Varyings i, int frontFace : VFACE) : SV_Target
 	hairGlossVal.y = hairGlossVal.z + 0.00800000038;
 
 	float4 hairGlossUV = hairGlossVal.xyxz * _HairGloss_ST.xyxy + _HairGloss_ST.zwzw;
-	float4 hairGloss1 = SAMPLE_TEX2D_SAMPLER(_HairGloss, SAMPLERTEX, hairGlossUV.xy);
-	float4 hairGloss2 = SAMPLE_TEX2D_SAMPLER(_HairGloss, SAMPLERTEX, hairGlossUV.zw);
+	float4 hairGloss1 = SAMPLE_TEX2D(_HairGloss, hairGlossUV.xy);
+	float4 hairGloss2 = SAMPLE_TEX2D(_HairGloss, hairGlossUV.zw);
 	float hairGloss = (hairGloss1 - hairGloss2) * 0.5f;
 
 	float4 ambientShadow = 1 - _ambientshadowG.wxyz;
@@ -211,7 +211,7 @@ fixed4 frag (Varyings i, int frontFace : VFACE) : SV_Target
 	shadowCol *= finalAmbientShadow;
 	diffuse = diffuse * minusAmbientShadow - shadowCol;
 	
-	float4 detailMask = tex2D(_DetailMask, i.uv0 * _DetailMask_ST.xy + _DetailMask_ST.zw);
+	float4 detailMask = SAMPLE_TEX2D(_DetailMask, i.uv0 * _DetailMask_ST.xy + _DetailMask_ST.zw);
 	float specularMap = _UseDetailRAsSpecularMap ? detailMask.r : 1;
 	_SpecularHairPower *= specularMap;
 	float2 invertDetailGB = 1 - detailMask.gb;
@@ -251,7 +251,7 @@ fixed4 frag (Varyings i, int frontFace : VFACE) : SV_Target
 	float4 emission = GetEmission(i.uv0);
 	finalDiffuse = finalDiffuse * (1 - emission.a) +  (emission.a * emission.rgb);
 
-	return float4(max(finalDiffuse,1E-06 - samplerTex.a * 1.2E-38), alpha);
+	return float4(max(finalDiffuse, 1E-06), alpha);
 }
 
 #endif

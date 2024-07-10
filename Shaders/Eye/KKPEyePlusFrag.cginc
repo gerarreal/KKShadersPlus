@@ -40,7 +40,7 @@ fixed4 frag (Varyings i) : SV_Target {
 	finalAmbientShadow = saturate(finalAmbientShadow);
 	float2 mainUV = rotateUV(i.uv0, float2(0.5, 0.5), -_rotation*6.28318548);
 	mainUV = mainUV * _MainTex_ST.xy + _MainTex_ST.zw;
-	float4 iris = SAMPLE_TEX2D_SAMPLER(_MainTex, SAMPLERTEX, mainUV);
+	float4 iris = SAMPLE_TEX2D(_MainTex, mainUV);
 	float3 viewDir = normalize(_WorldSpaceCameraPos - i.posWS);
 	float2 expressionUV = float2(dot(i.tanWS, viewDir),
 						   dot(i.bitanWS, viewDir));
@@ -50,15 +50,15 @@ fixed4 frag (Varyings i) : SV_Target {
 	expressionUV -= 0.5;
 	expressionUV /= max(0.1, _ExpressionSize);
 	expressionUV += 0.5;
-	float4 expression = SAMPLE_TEX2D_SAMPLER(_expression, _expression, expressionUV + float2(0, 0.1));
+	float4 expression = SAMPLE_TEX2D(_expression, expressionUV + float2(0, 0.1));
 	expression.rgb =  expression.rgb - iris.rgb;
 	expression.a *= _exppower;
 	float3 diffuse = expression.a * expression.rgb + iris.rgb;
 
 
-	float4 overTex1 = SAMPLE_TEX2D_SAMPLER(_overtex1, _overtex1, i.uv1 * _overtex1_ST + _overtex1_ST.zw);
+	float4 overTex1 = SAMPLE_TEX2D(_overtex1, i.uv1 * _overtex1_ST + _overtex1_ST.zw);
 	overTex1 = overTex1.a * _overcolor1.rgba;
-	float4 overTex2 = SAMPLE_TEX2D_SAMPLER(_overtex2, _overtex2, i.uv2 * _overtex2_ST + _overtex2_ST.zw);
+	float4 overTex2 = SAMPLE_TEX2D(_overtex2, i.uv2 * _overtex2_ST + _overtex2_ST.zw);
 	overTex2 = overTex2.a * _overcolor2.rgba;
 	float4 overTex = 1 - (1 - overTex1) * (1- overTex2);
 	float3 blendOverTex = overTex.rgb - diffuse;
@@ -80,7 +80,7 @@ fixed4 frag (Varyings i) : SV_Target {
 #ifdef VERTEXLIGHT_ON
 	vertexLighting = GetVertexLighting(vertexLights, i.normalWS);
 	float2 vertexLightRampUV = vertexLighting.a * _RampG_ST.xy + _RampG_ST.zw;
-	vertexLightRamp = tex2D(_RampG, vertexLightRampUV).x;
+	vertexLightRamp = SAMPLE_TEX2D(_RampG, vertexLightRampUV).x;
 	float3 rampLighting = GetRampLighting(vertexLights, i.normalWS, vertexLightRamp);
 	vertexLighting.rgb = _UseRampForLights ? rampLighting : vertexLighting.rgb;
 #endif
@@ -88,7 +88,7 @@ fixed4 frag (Varyings i) : SV_Target {
 	lambert = saturate(expression.a + overTex.a + lambert);
 	finalAmbientShadow = lambert * finalAmbientShadow + shadedDiffuse;
 	
-	float shadowAttenuation = saturate(tex2D(_RampG, lambert * _RampG_ST.xy + _RampG_ST.zw).x);
+	float shadowAttenuation = saturate(SAMPLE_TEX2D(_RampG, lambert * _RampG_ST.xy + _RampG_ST.zw).x);
 	#ifdef SHADOWS_SCREEN
 		float2 shadowMapUV = i.shadowCoordinate.xy / i.shadowCoordinate.ww;
 		float4 shadowMap = tex2D(_ShadowMapTexture, shadowMapUV);
@@ -111,7 +111,7 @@ fixed4 frag (Varyings i) : SV_Target {
 	emissionUV = emissionUV * _MainTex_ST.xy + _MainTex_ST.zw;
 	emissionUV = emissionUV * _EmissionMask_ST.xy + _EmissionMask_ST.zw;
 	
-	float4 emissionMask = tex2D(_EmissionMask, emissionUV);
+	float4 emissionMask = SAMPLE_TEX2D(_EmissionMask, emissionUV);
 	float3 emissionCol =  _EmissionColor.rgb * _EmissionIntensity * emissionMask.rgb;
 	float4 emission = float4(emissionCol, emissionMask.a * _EmissionColor.a * iris.a);
 	
