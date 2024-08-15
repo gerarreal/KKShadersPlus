@@ -7,7 +7,7 @@
 		[Gamma]_Col1 ("Color 1", Color) = (1, 1, 1, 1)
 		[Gamma]_Col2 ("Color 2", Color) = (1, 1, 1, 1)
 		[Gamma]_Col3 ("Color 3", Color) = (1, 1, 1, 1)
-		
+
 		_MainTex ("MainTex", 2D) = "white" {}
 		[Gamma]_overcolor1 ("Over Color1", Vector) = (1,1,1,1)
 		_overtex1 ("Over Tex1", 2D) = "black" {}
@@ -94,12 +94,12 @@
 		_DisplaceNormalMultiplier("DisplaceNormalMultiplier", float) = 1
 		_DisplaceFull("Displace Full", Range(-1, 1)) = 0
 		_Clock ("W is for displacement multiplier for animation", Vector) = (0,0,0,1)
-		
+
 		_DisablePointLights ("Disable Point Lights", Range(0,1)) = 0.0
 		_DisableShadowedMatcap ("Disable Shadowed Matcap", Range(0,1)) = 0.0
 		[MaterialToggle] _AdjustBackfaceNormals ("Adjust Backface Normals", Float) = 0.0
 		_rimReflectMode ("Rimlight Placement", Float) = 0.0
-		
+
 		_SpecularNormalScale ("Specular Normal Map Relative Scale", Float) = 1
 		_SpecularDetailNormalScale ("Specular Detail Normal Map Relative Scale", Float) = 1
 	}
@@ -122,7 +122,7 @@
 			#pragma fragment frag
 			#pragma hull hull
 			#pragma domain domain
-			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu 
+			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
 
@@ -137,7 +137,7 @@
 				DisplacementValues(v, vertex, normal);
 				v.vertex = vertex;
 				v.normal = normal;
-				
+
 				Varyings o;
 				o.posWS = mul(unity_ObjectToWorld, v.vertex);
 				float3 viewDir = _WorldSpaceCameraPos.xyz - o.posWS.xyz;
@@ -177,15 +177,15 @@
 				1;
 				return o;
 			}
-			
+
 			#include "KKPTess.cginc"
 
 			fixed4 frag (Varyings i, int frontFace : VFACE) : SV_Target
 			{
 
-				
+
 				//Defined in Diffuse.cginc
-				AlphaClip(i.uv0, _OutlineOn ? 1 : 0);	
+				AlphaClip(i.uv0, _OutlineOn ? 1 : 0);
 				float3 diffuse = GetDiffuse(i);
 				float3 u_xlat1;
 				MapValuesOutline(diffuse, u_xlat1);
@@ -237,7 +237,7 @@
 				return float4(max(finalColor, 1e-06), 1.0);
 			}
 
-			
+
 			ENDCG
 		}
 
@@ -258,12 +258,12 @@
 			#pragma fragment frag
 			#pragma hull hull
 			#pragma domain domain
-			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu 
+			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu
 			#pragma multi_compile _ VERTEXLIGHT_ON
 			#pragma multi_compile _ SHADOWS_SCREEN
 
 			#define KKP_EXPENSIVE_RAMP
-			
+
 			//Unity Includes
 			#include "UnityCG.cginc"
 			#include "AutoLight.cginc"
@@ -305,7 +305,7 @@
 				o.uv1 = v.uv1;
 				o.uv2 = v.uv2;
 				o.uv3 = v.uv3;
-				
+
 			#ifdef SHADOWS_SCREEN
 				float4 projPos = o.posCS;
 				projPos.y *= _ProjectionParams.x;
@@ -317,8 +317,8 @@
 			#endif
 				return o;
 			}
-			
-			
+
+
 			#include "KKPTess.cginc"
 
 
@@ -337,8 +337,8 @@
 			#pragma fragment reflectfrag
 			#pragma hull hull
 			#pragma domain domain
-			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu 
-			
+			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu
+
 			#pragma multi_compile _ VERTEXLIGHT_ON
 			#pragma multi_compile _ SHADOWS_SCREEN
 
@@ -347,7 +347,7 @@
 			#include "UnityCG.cginc"
 			#include "AutoLight.cginc"
 			#include "Lighting.cginc"
-			
+
 			#include "KKPSkinInput.cginc"
 			#include "KKPDiffuse.cginc"
 			#include "../KKPDisplace.cginc"
@@ -356,10 +356,10 @@
 			#include "../KKPVertexLights.cginc"
 			#include "../KKPVertexLightsSpecular.cginc"
 			#include "../KKPLighting.cginc"
-			
+
 			#include "KKPSkinReflect.cginc"
 
-			
+
 			Varyings vert (VertexData v)
 			{
 				Varyings o;
@@ -375,6 +375,16 @@
 				float3 biTan = cross(o.tanWS, o.normalWS);
 				o.bitanWS = normalize(biTan);
 				o.uv0 = v.uv0;
+
+                #ifdef SHADOWS_SCREEN
+                    float4 projPos = o.posCS;
+                    projPos.y *= _ProjectionParams.x;
+                    float4 projbiTan;
+                    projbiTan.xyz = biTan;
+                    projbiTan.xzw = projPos.xwy * 0.5;
+                    o.shadowCoordinate.zw = projPos.zw;
+                    o.shadowCoordinate.xy = projbiTan.zz + projbiTan.xw;
+                #endif
 				return o;
 			}
 			#include "KKPTess.cginc"
@@ -382,7 +392,7 @@
 			ENDCG
 
 		}
-		
+
 		//ShadowCaster
 		Pass
 		{
@@ -400,7 +410,7 @@
 			#pragma hull hull
 			#pragma domain domain
 			#pragma multi_compile_shadowcaster
-			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu 
+			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu
 
 			#define SHADOW_CASTER_PASS
 
@@ -408,7 +418,7 @@
 			#include "KKPSkinInput.cginc"
 			#include "../KKPDisplace.cginc"
 			#define TESS_LOW
-            struct v2f { 
+            struct v2f {
 				float2 uv0 : TEXCOORD1;
                 V2F_SHADOW_CASTER;
             };
@@ -442,10 +452,10 @@
                 SHADOW_CASTER_FRAGMENT(i)
             }
 
-			
+
 			ENDCG
 		}
-		
+
 	}
 	Fallback "Unlit/Texture"
 }

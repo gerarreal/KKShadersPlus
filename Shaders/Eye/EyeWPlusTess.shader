@@ -11,7 +11,7 @@
 		_EmissionIntensity("Emission Intensity", Float) = 1
 		[Gamma]_CustomAmbient("Custom Ambient", Color) = (0.666666666, 0.666666666, 0.666666666, 1)
 		[MaterialToggle] _UseRampForLights ("Use Ramp For Light", Float) = 1
-		
+
 		_ReflectMap ("Reflect Body Map", 2D) = "white" {}
 		_Roughness ("Roughness", Range(0, 1)) = 0.75
 		_ReflectionVal ("ReflectionVal", Range(0, 1)) = 1.0
@@ -25,10 +25,10 @@
 		_ReflectRotation ("Matcap Rotation", Range(0, 360)) = 0
 		_ReflectMask ("Reflect Body Mask", 2D) = "white" {}
 		_DisableShadowedMatcap ("Disable Shadowed Matcap", Range(0,1)) = 0.0
-		
+
 		_DisablePointLights ("Disable Point Lights", Range(0,1)) = 0.0
 		_ShadowHSV ("Shadow HSV", Vector) = (0, 0, 0, 0)
-		
+
 		_TessTex ("Tess Tex", 2D) = "white" {}
 		_TessMax("Tess Max", Range(1, 25)) = 4
 		_TessMin("Tess Min", Range(1, 25)) = 1
@@ -45,14 +45,14 @@
 	{
 		LOD 600
 		Tags { "IGNOREPROJECTOR" = "true" "QUEUE" = "Transparent-1" "RenderType" = "Transparent" }
-		
+
 		//Main Pass
 		Pass {
 			Name "Forward"
 			LOD 600
 			Tags { "IGNOREPROJECTOR" = "true" "LIGHTMODE" = "FORWARDBASE" "QUEUE" = "Transparent-1" "RenderType" = "Transparent" "SHADOWSUPPORT" = "true" }
 			ZWrite Off
-			
+
 			Stencil {
 				Ref 2
 				Comp Always
@@ -67,12 +67,12 @@
 			#pragma fragment frag
 			#pragma hull hull
 			#pragma domain domain
-			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu 
-			
+			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu
+
 			#pragma multi_compile _ VERTEXLIGHT_ON
-			
+
 			#define KKP_EXPENSIVE_RAMP
-			
+
 			//Unity Includes
 			#include "UnityCG.cginc"
 			#include "AutoLight.cginc"
@@ -88,13 +88,13 @@
 			Varyings vert (VertexData v)
 			{
 				Varyings o;
-				
+
 				float4 vertex = v.vertex;
 				float3 normal = v.normal;
 				DisplacementValues(v, vertex, normal);
 				v.vertex = vertex;
 				v.normal = normal;
-				
+
 				o.posWS = mul(unity_ObjectToWorld, v.vertex);
 				o.posCS = mul(UNITY_MATRIX_VP, o.posWS);
 				o.normalWS = UnityObjectToWorldNormal(v.normal);
@@ -102,14 +102,14 @@
 				1;
 				return o;
 			}
-			
+
 			#include "KKPEyeTess.cginc"
 
 			#include "KKPEyeWPlusFrag.cginc"
-			
+
 			ENDCG
 		}
-		
+
 		//Reflection Pass
 		Pass {
 			Name "Reflect"
@@ -117,41 +117,42 @@
 			Tags { "IGNOREPROJECTOR" = "true" "LIGHTMODE" = "FORWARDBASE" "QUEUE" = "Transparent-1" "RenderType" = "Transparent" "SHADOWSUPPORT" = "true" }
 			Blend [_ReflBlendSrc] [_ReflBlendDst]
 			ZWrite Off
-			
+
 			CGPROGRAM
 			#pragma target 5.0
 			#pragma vertex TessVert
 			#pragma fragment reflectfrag
 			#pragma hull hull
 			#pragma domain domain
-			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu 
-			
+			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu
+
 			#pragma multi_compile _ VERTEXLIGHT_ON
-			
+			#pragma multi_compile _ SHADOWS_SCREEN
+
 			#define KKP_EXPENSIVE_RAMP
 
 			//Unity Includes
 			#include "UnityCG.cginc"
 			#include "AutoLight.cginc"
 			#include "Lighting.cginc"
-			
+
 			#include "KKPEyeInput.cginc"
 			#include "KKPEyeDiffuse.cginc"
 			#include "../KKPDisplace.cginc"
 			#include "../KKPVertexLights.cginc"
-			
+
 			#include "KKPEyeReflect.cginc"
 
 			Varyings vert (VertexData v)
 			{
 				Varyings o;
-				
+
 				float4 vertex = v.vertex;
 				float3 normal = v.normal;
 				DisplacementValues(v, vertex, normal);
 				v.vertex = vertex;
 				v.normal = normal;
-				
+
 				o.posWS = mul(unity_ObjectToWorld, v.vertex);
 				o.posCS = UnityObjectToClipPos(v.vertex);
 				o.normalWS = UnityObjectToWorldNormal(v.normal);
@@ -159,14 +160,24 @@
 				float3 biTan = cross(o.tanWS, o.normalWS);
 				o.bitanWS = normalize(biTan);
 				o.uv0 = v.uv0;
+
+                #ifdef SHADOWS_SCREEN
+                    float4 projPos = o.posCS;
+                    projPos.y *= _ProjectionParams.x;
+                    float4 projbiTan;
+                    projbiTan.xyz = biTan;
+                    projbiTan.xzw = projPos.xwy * 0.5;
+                    o.shadowCoordinate.zw = projPos.zw;
+                    o.shadowCoordinate.xy = projbiTan.zz + projbiTan.xw;
+                #endif
 				return o;
 			}
-			
+
 			#include "KKPEyeTess.cginc"
-			
+
 			ENDCG
 		}
-		
+
 		//ShadowCaster
 		Pass {
 			Name "ShadowCaster"
@@ -177,14 +188,14 @@
 
 			CGPROGRAM
 			#pragma target 5.0
-			
+
 			#pragma vertex TessVert
 			#pragma fragment frag
 			#pragma hull hull
 			#pragma domain domain
 			#pragma multi_compile_shadowcaster
-			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu 
-			
+			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu
+
 			#define SHADOW_CASTER_PASS
 
 			#include "UnityCG.cginc"
@@ -192,7 +203,7 @@
 			#include "../KKPDisplace.cginc"
 			#define TESS_LOW
 
-            struct v2f { 
+            struct v2f {
 				float2 uv0 : TEXCOORD1;
                 V2F_SHADOW_CASTER;
             };
@@ -200,18 +211,18 @@
             v2f vert(VertexData v)
             {
                 v2f o;
-				
+
 				float4 vertex = v.vertex;
 				float3 normal = v.normal;
 				DisplacementValues(v, vertex, normal);
 				v.vertex = vertex;
 				v.normal = normal;
-				
+
 				o.uv0 = v.uv0;
                 TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
                 return o;
             }
-			
+
 			#include "KKPEyeTess.cginc"
 
             float4 frag(v2f i) : SV_Target
