@@ -47,7 +47,7 @@
 		_KKPRimAsDiffuse ("Body Rim As Diffuse", Range(0, 1)) = 0.0
 		_KKPRimRotateX("Body Rim Rotate X", Float) = 0.0
 		_KKPRimRotateY("Body Rim Rotate Y", Float) = 0.0
-		
+
 		_ReflectMap ("Reflect Body Map", 2D) = "white" {}
 		_Roughness ("Roughness", Range(0, 1)) = 0.75
 		_ReflectionVal ("ReflectionVal", Range(0, 1)) = 1.0
@@ -57,7 +57,7 @@
 		_ReflBlendSrc ("Reflect Blend Src", Float) = 2.0
 		_ReflBlendDst ("Reflect Blend Dst", Float) = 0.0
 		_ReflBlendVal ("Reflect Blend Val", Range(0, 1)) = 1.0
-		
+
 		_ReflectColMix ("Reflection Color Mix Amount", Range(0,1)) = 1
 		_ReflectRotation ("Matcap Rotation", Range(0, 360)) = 0
 		_ReflectMask ("Reflect Body Mask", 2D) = "white" {}
@@ -66,7 +66,7 @@
 		[MaterialToggle] _AdjustBackfaceNormals ("Adjust Backface Normals", Float) = 0.0
 		[Enum(Off,0,Front,1,Back,2)] _CullOption ("Cull Option", Range(0, 2)) = 0
 		_rimReflectMode ("Rimlight Placement", Float) = 0.0
-		
+
 		_SpecularNormalScale ("Specular Normal Map Relative Scale", Float) = 1
 	}
 	SubShader
@@ -84,8 +84,8 @@
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu 
-			
+			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu
+
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
 
@@ -96,7 +96,7 @@
 			Varyings vert (VertexData v)
 			{
 				Varyings o;
-				
+
 				float alphaMask = SAMPLE_TEX2D_LOD(_AlphaMask, v.uv0 * _AlphaMask_ST.xy + _AlphaMask_ST.zw, 0).r;
 				float mainAlpha = SAMPLE_TEX2D_LOD(_MainTex, v.uv0 * _MainTex_ST.xy + _MainTex_ST.zw, 0).a;
 				float alpha = alphaMask * mainAlpha;
@@ -122,9 +122,9 @@
 				1;
 				return o;
 			}
-			
 
-			
+
+
 
 			fixed4 frag (Varyings i) : SV_Target
 			{
@@ -139,15 +139,15 @@
 				float3 lineColor = _LineColor.rgb - 0.5;
 				lineColor = -lineColor * 2 + 1;
 				lineColor = -lineColor * diffuseMainTex + 1;
-			
-				bool3 colCheck = 0.5 < _LineColor.rgb;		
+
+				bool3 colCheck = 0.5 < _LineColor.rgb;
 				{
 					float3 hlslcc_movcTemp = diffuse;
 					hlslcc_movcTemp.x = (colCheck.x) ? lineColor.x : diffuse.x;
 					hlslcc_movcTemp.y = (colCheck.y) ? lineColor.y : diffuse.y;
 					hlslcc_movcTemp.z = (colCheck.z) ? lineColor.z : diffuse.z;
 					diffuse = hlslcc_movcTemp;
-				}	
+				}
 				diffuse = saturate(diffuse);
 				float3 lightCol = _LightColor0.xyz * float3(0.600000024, 0.600000024, 0.600000024) + _CustomAmbient.rgb;
 				diffuse *= lightCol;
@@ -156,10 +156,10 @@
 
 			}
 
-			
+
 			ENDCG
 		}
-		
+
 		//Main Pass
 		Pass
 		{
@@ -173,10 +173,10 @@
 
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu 
+			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu
 			#pragma multi_compile _ VERTEXLIGHT_ON
 			#pragma multi_compile _ SHADOWS_SCREEN
-			
+
 			#define KKP_EXPENSIVE_RAMP
 
 			//Unity Includes
@@ -190,12 +190,12 @@
 			#include "../KKPVertexLights.cginc"
 			#include "../KKPVertexLightsSpecular.cginc"
 			#include "../KKPEmission.cginc"
-			
+
 			#include "KKPHairVertFrag.cginc" //Vert Frag here
 
 			ENDCG
 		}
-		
+
 		//Reflection Pass
 		Pass{
 			Name "Reflect"
@@ -206,8 +206,8 @@
 			#pragma target 3.0
 			#pragma vertex vert
 			#pragma fragment reflectfrag
-			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu 
-			
+			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu
+
 			#pragma multi_compile _ VERTEXLIGHT_ON
 			#pragma multi_compile _ SHADOWS_SCREEN
 
@@ -216,13 +216,13 @@
 			#include "UnityCG.cginc"
 			#include "AutoLight.cginc"
 			#include "Lighting.cginc"
-			
+
 			#include "KKPHairInput.cginc"
 			#include "KKPHairDiffuse.cginc"
 			#include "KKPHairNormals.cginc"
 			#include "../KKPVertexLights.cginc"
 			#include "../KKPVertexLightsSpecular.cginc"
-			
+
 			#include "KKPHairReflect.cginc"
 
 			Varyings vert (VertexData v)
@@ -235,14 +235,24 @@
 				float3 biTan = cross(o.tanWS, o.normalWS);
 				o.bitanWS = normalize(biTan);
 				o.uv0 = v.uv0;
+
+                #ifdef SHADOWS_SCREEN
+                    float4 projPos = o.posCS;
+                    projPos.y *= _ProjectionParams.x;
+                    float4 projbiTan;
+                    projbiTan.xyz = biTan;
+                    projbiTan.xzw = projPos.xwy * 0.5;
+                    o.shadowCoordinate.zw = projPos.zw;
+                    o.shadowCoordinate.xy = projbiTan.zz + projbiTan.xw;
+                #endif
 				return o;
 			}
-			
+
 
 			ENDCG
 
 		}
-		
+
 		//ShadowCaster
 		Pass
 		{
@@ -256,7 +266,7 @@
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile_shadowcaster
-			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu 
+			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu
 
 			#include "UnityCG.cginc"
 
@@ -267,7 +277,7 @@
 			//DECLARE_TEX2D(_AlphaMask);
 			//float4 _AlphaMask_ST;
 
-            struct v2f { 
+            struct v2f {
 				float2 uv0 : TEXCOORD1;
                 V2F_SHADOW_CASTER;
             };

@@ -22,7 +22,7 @@
 		[MaterialToggle] _UseRampForLights ("Use Ramp For Light", Float) = 1
 		_DisablePointLights ("Disable Point Lights", Range(0,1)) = 0.0
 		_ShadowHSV ("Shadow HSV", Vector) = (0, 0, 0, 0)
-		
+
 		_ReflectMap ("Reflect Body Map", 2D) = "white" {}
 		_Roughness ("Roughness", Range(0, 1)) = 0.75
 		_ReflectionVal ("ReflectionVal", Range(0, 1)) = 1.0
@@ -41,22 +41,22 @@
 	{
 		LOD 600
 		Tags {"IgnoreProjector" = "true"
-			  "Queue" = "Transparent" 
+			  "Queue" = "Transparent"
 			  "RenderType" = "Transparent" }
-		
+
 		//Main Pass
 		Pass {
 			Name "Forward"
 			LOD 600
 			Tags { 	"IgnoreProjector" = "true"
-					"LightMode" = "ForwardBase" 
-					"Queue" = "Transparent" 
+					"LightMode" = "ForwardBase"
+					"Queue" = "Transparent"
 			  		"RenderType" = "Transparent"
 					"ShadowSupport" = "true" }
-					
+
 			Blend SrcAlpha OneMinusSrcAlpha, SrcAlpha OneMinusSrcAlpha
 			ZWrite Off
-			
+
 			Stencil {
 				Ref 2
 				Comp Always
@@ -68,7 +68,7 @@
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu 
+			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu
 			#pragma multi_compile _ VERTEXLIGHT_ON
 
 			#define KKP_EXPENSIVE_RAMP
@@ -103,7 +103,7 @@
 			}
 
 			#include "KKPEyePlusFrag.cginc"
-			
+
 			ENDCG
 		}
 
@@ -114,14 +114,15 @@
 			Tags { "IGNOREPROJECTOR" = "true" "LIGHTMODE" = "FORWARDBASE" "QUEUE" = "Transparent" "RenderType" = "Transparent" "SHADOWSUPPORT" = "true" }
 			Blend [_ReflBlendSrc] [_ReflBlendDst]
 			ZWrite Off
-			
+
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment reflectfrag
-			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu 
-			
+			#pragma only_renderers d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu
+
 			#pragma multi_compile _ VERTEXLIGHT_ON
-			
+			#pragma multi_compile _ SHADOWS_SCREEN
+
 			#define KKP_EXPENSIVE_RAMP
 			#define MOVE_PUPILS
 
@@ -129,11 +130,11 @@
 			#include "UnityCG.cginc"
 			#include "AutoLight.cginc"
 			#include "Lighting.cginc"
-			
+
 			#include "KKPEyeInput.cginc"
 			#include "KKPEyeDiffuse.cginc"
 			#include "../KKPVertexLights.cginc"
-			
+
 			#include "KKPEyeReflect.cginc"
 
 			Varyings vert (VertexData v)
@@ -146,6 +147,16 @@
 				float3 biTan = cross(o.tanWS, o.normalWS);
 				o.bitanWS = normalize(biTan);
 				o.uv0 = v.uv0;
+
+                #ifdef SHADOWS_SCREEN
+                    float4 projPos = o.posCS;
+                    projPos.y *= _ProjectionParams.x;
+                    float4 projbiTan;
+                    projbiTan.xyz = biTan;
+                    projbiTan.xzw = projPos.xwy * 0.5;
+                    o.shadowCoordinate.zw = projPos.zw;
+                    o.shadowCoordinate.xy = projbiTan.zz + projbiTan.xw;
+                #endif
 				return o;
 			}
 			ENDCG
