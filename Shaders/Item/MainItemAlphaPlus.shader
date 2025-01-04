@@ -11,6 +11,7 @@
 		_EmissionMask ("Emission Mask", 2D) = "black" {}
 		[Gamma]_EmissionColor("Emission Color", Color) = (1, 1, 1, 1)
 		_EmissionIntensity("Emission Intensity", Float) = 1
+		_EmissionMaskMode("Emission Mask Mode", Float) = 0
 		[Gamma]_ShadowColor ("Shadow Color", Vector) = (0.628,0.628,0.628,1)
 		_ShadowHSV ("Shadow HSV", Vector) = (0, 0, 0, 0)
 		[Gamma]_SpecularColor ("Specular Color", Color) = (1,1,1,1)

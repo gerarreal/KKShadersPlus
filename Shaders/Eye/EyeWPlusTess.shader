@@ -9,6 +9,7 @@
 		_EmissionMask ("Emission Mask", 2D) = "black" {}
 		[Gamma]_EmissionColor("Emission Color", Color) = (1, 1, 1, 1)
 		_EmissionIntensity("Emission Intensity", Float) = 1
+		_EmissionMaskMode("Emission Mask Mode", Float) = 0
 		[Gamma]_CustomAmbient("Custom Ambient", Color) = (0.666666666, 0.666666666, 0.666666666, 1)
 		[MaterialToggle] _UseRampForLights ("Use Ramp For Light", Float) = 1
 

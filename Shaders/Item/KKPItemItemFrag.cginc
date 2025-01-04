@@ -287,7 +287,7 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
 	finalDiffuse = lerp(finalDiffuse, kkpFresCol, _KKPRimColor.a * kkpFres * rimPlace * (1 - _KKPRimAsDiffuse));
 
 	float4 emission = GetEmission(i.uv0);
-	finalDiffuse = finalDiffuse * (1 - emission.a) + (emission.a*emission.rgb);
+	finalDiffuse = CombineEmission(finalDiffuse, emission);
 	
 	float alpha = 1;
 	#ifdef ALPHA_SHADER
