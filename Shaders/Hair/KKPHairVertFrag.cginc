@@ -249,7 +249,7 @@ fixed4 frag (Varyings i, int frontFace : VFACE) : SV_Target
 
 	//Overlay Emission over everything
 	float4 emission = GetEmission(i.uv0);
-	finalDiffuse = finalDiffuse * (1 - emission.a) +  (emission.a * emission.rgb);
+	finalDiffuse = CombineEmission(finalDiffuse, emission);
 
 	return float4(max(finalDiffuse, 1E-06), alpha);
 }

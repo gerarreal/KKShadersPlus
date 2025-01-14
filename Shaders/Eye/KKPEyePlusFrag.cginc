@@ -110,12 +110,9 @@ fixed4 frag (Varyings i) : SV_Target {
 	emissionUV = emissionUV + float2(dot(i.tanWS, viewDir), dot(i.bitanWS, viewDir)) * -0.06 * _ExpressionDepth;
 	emissionUV = emissionUV * _MainTex_ST.xy + _MainTex_ST.zw;
 	emissionUV = emissionUV * _EmissionMask_ST.xy + _EmissionMask_ST.zw;
-	
-	float4 emissionMask = SAMPLE_TEX2D(_EmissionMask, emissionUV);
-	float3 emissionCol =  _EmissionColor.rgb * _EmissionIntensity * emissionMask.rgb;
-	float4 emission = float4(emissionCol, emissionMask.a * _EmissionColor.a * iris.a);
-	
-	finalCol = max(finalCol, 1E-06) + emission.rgb * emission.a;
+
+	float4 emission = GetEmission(emissionUV);
+	finalCol = max(CombineEmission(finalCol, emission), 1E-06);
 	
 	return float4(max(finalCol, 1E-06), alpha);
 }

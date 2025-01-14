@@ -35,6 +35,7 @@
 		_EmissionMask ("Emission Mask", 2D) = "black" {}
 		[Gamma]_EmissionColor("Emission Color", Color) = (1, 1, 1, 1)
 		_EmissionIntensity("Emission Intensity", Float) = 1
+		_EmissionMaskMode("Emission Mask Mode", Float) = 0
 		_LineWidthS ("LineWidthS", Float) = 1
 		[Enum(Off,0,On,1)]_OutlineOn ("Outline On", Float) = 1.0
 		[Enum(Off,0,On,1)]_SpecularHeightInvert ("Specular Height Invert", Float) = 0

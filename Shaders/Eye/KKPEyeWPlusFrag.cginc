@@ -79,7 +79,7 @@ fixed4 frag (Varyings i) : SV_Target
 
 	// Overlay emission over everything
 	float4 emission = GetEmission(i.uv0);
-	finalCol = finalCol * (1 - emission.a) + (emission.a * emission.rgb);
+	finalCol = CombineEmission(finalCol, emission);
 	
 	return float4(max(finalCol, 1E-06), alpha);
 }
