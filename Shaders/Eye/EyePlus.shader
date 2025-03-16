@@ -37,6 +37,7 @@
 		_ReflectRotation ("Matcap Rotation", Range(0, 360)) = 0
 		_ReflectMask ("Reflect Body Mask", 2D) = "white" {}
 		_DisableShadowedMatcap ("Disable Shadowed Matcap", Range(0,1)) = 0.0
+		_Saturation ("Saturation", Float) = 1
 	}
 	SubShader
 	{

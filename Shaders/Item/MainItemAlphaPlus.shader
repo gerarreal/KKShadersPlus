@@ -71,6 +71,7 @@
 		
 		_SpecularNormalScale ("Specular Normal Map Relative Scale", Float) = 1
 		_SpecularDetailNormalScale ("Specular Detail Normal Map Relative Scale", Float) = 1
+		_Saturation ("Saturation", Float) = 1
 	}
 	SubShader
 	{
@@ -217,7 +218,7 @@
 				diffuse *= lineAlpha;
 				diffuse = 0.5 < _LineColorG.w ? lineCol : diffuse;
 
-				float3 finalDiffuse = lerp(diffuse, _OutlineColor.rgb, _OutlineColor.a);
+				float3 finalDiffuse = applySaturation(lerp(diffuse, _OutlineColor.rgb, _OutlineColor.a), _Saturation);
 				return float4(finalDiffuse, mainTex.a * _Alpha);
 			}
 			ENDCG

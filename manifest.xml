@@ -2,7 +2,7 @@
 <manifest schema-ver="1">
   <guid>xukmi.Shaders.VanillaPlus</guid>
   <name>Vanilla Plus</name>
-  <version>1.6.0</version>
+  <version>1.7.0</version>
   <author>xukmi</author>
   <description>Vanilla KK Shaders with more features</description>
   <website>https://www.pixiv.net/en/users/66587336</website>
@@ -80,6 +80,7 @@
       <Property Name="KKPRimAsDiffuse" Type="Float" Range="0, 1" />
       <Property Name="KKPRimRotateX" Type="Float" Range="-2, 2" />
       <Property Name="KKPRimRotateY" Type="Float" Range="-2, 2" />
+      <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="ShadowHSV" Type="Color" />
     </Shader>
     <Shader Name="xukmi/SkinPlusReflect" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_SkinPlusReflect">
@@ -168,6 +169,7 @@
       <Property Name="ReflectRotation" Type="Float" Range="0, 360" />
       <Property Name="ReflectMask" Type="Texture" />
       <Property Name="ReflectColMix" Type="Float" Range="0, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="ShadowHSV" Type="Color" />
     </Shader>
     <Shader Name="xukmi/SkinPlusTess" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_SkinPlusTess">
@@ -253,6 +255,7 @@
       <Property Name="DisplaceMultiplier" Type="Float" />
       <Property Name="DisplaceNormalMultiplier" Type="Float" />
       <Property Name="DisplaceFull" Type="Float" Range="-1, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="Clock" Type="Color" />
       <Property Name="ShadowHSV" Type="Color" />
     </Shader>
@@ -353,6 +356,7 @@
       <Property Name="ReflectRotation" Type="Float" Range="0, 360" />
       <Property Name="ReflectMask" Type="Texture" />
       <Property Name="ReflectColMix" Type="Float" Range="0, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="ShadowHSV" Type="Color" />
     </Shader>
     <Shader Name="xukmi/HairPlus" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_HairPlus">
@@ -405,6 +409,7 @@
       <Property Name="AdjustBackfaceNormals" Type="Float" Range="0, 1" />
       <Property Name="CullOption" Type="Float" Range="0, 2" />
       <Property Name="Cutoff" Type="Float" Range="0, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="ShadowHSV" Type="Color" />
     </Shader>
     <Shader Name="xukmi/HairPlusTess" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_HairPlusTess">
@@ -468,6 +473,7 @@
       <Property Name="DisplaceMultiplier" Type="Float" />
       <Property Name="DisplaceNormalMultiplier" Type="Float" />
       <Property Name="DisplaceFull" Type="Float" Range="-1, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="Clock" Type="Color" />
     </Shader>
     <Shader Name="xukmi/HairPlusReflect" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_HairPlusReflect">
@@ -533,6 +539,7 @@
       <Property Name="ReflectRotation" Type="Float" Range="0, 360" />
       <Property Name="ReflectMask" Type="Texture" />
       <Property Name="ReflectColMix" Type="Float" Range="0, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="ShadowHSV" Type="Color" />
     </Shader>
     <Shader Name="xukmi/HairPlusTessReflect" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_HairPlusTessReflect">
@@ -609,6 +616,7 @@
       <Property Name="DisplaceMultiplier" Type="Float" />
       <Property Name="DisplaceNormalMultiplier" Type="Float" />
       <Property Name="DisplaceFull" Type="Float" Range="-1, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="Clock" Type="Color" />
     </Shader>
     <Shader Name="xukmi/HairFrontPlus" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_HairFrontPlus">
@@ -672,6 +680,7 @@
       <Property Name="Cutoff" Type="Float" Range="0, 1" />
       <Property Name="ShadowHSV" Type="Color" />
       <Property Name="transparency" Type="Float" Range="0, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
     </Shader>
     <Shader Name="xukmi/HairFrontPlusTess" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_HairFrontPlusTess">
       <Property Name="DetailMask" Type="Texture" />
@@ -745,6 +754,7 @@
       <Property Name="DisplaceFull" Type="Float" Range="-1, 1" />
       <Property Name="Clock" Type="Color" />
       <Property Name="transparency" Type="Float" Range="0, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
     </Shader>
     <Shader Name="xukmi/HairFrontPlusReflect" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_HairFrontPlusReflect">
       <Property Name="DetailMask" Type="Texture" />
@@ -811,6 +821,7 @@
       <Property Name="ReflectColMix" Type="Float" Range="0, 1" />
       <Property Name="ShadowHSV" Type="Color" />
       <Property Name="transparency" Type="Float" Range="0, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
     </Shader>
     <Shader Name="xukmi/HairFrontPlusTessReflect" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_HairFrontPlusTessReflect">
       <Property Name="DetailMask" Type="Texture" />
@@ -888,6 +899,7 @@
       <Property Name="DisplaceFull" Type="Float" Range="-1, 1" />
       <Property Name="Clock" Type="Color" />
       <Property Name="transparency" Type="Float" Range="0, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
     </Shader>
     <Shader Name="xukmi/EyePlus" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_EyePlus">
       <Property Name="MainTex" Type="Texture" />
@@ -922,6 +934,7 @@
       <Property Name="ReflectRotation" Type="Float" Range="0, 360" />
       <Property Name="ReflectMask" Type="Texture" />
       <Property Name="ReflectColMix" Type="Float" Range="0, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="ShadowHSV" Type="Color" />
     </Shader>
     <Shader Name="xukmi/EyePlusTess" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_EyePlusTess">
@@ -968,6 +981,7 @@
       <Property Name="DisplaceMultiplier" Type="Float" />
       <Property Name="DisplaceNormalMultiplier" Type="Float" />
       <Property Name="DisplaceFull" Type="Float" Range="-1, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="Clock" Type="Color" />
     </Shader>
     <Shader Name="xukmi/EyeWPlus" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_EyeWPlus">
@@ -995,6 +1009,7 @@
       <Property Name="ReflectRotation" Type="Float" Range="0, 360" />
       <Property Name="ReflectMask" Type="Texture" />
       <Property Name="ReflectColMix" Type="Float" Range="0, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="ShadowHSV" Type="Color" />
     </Shader>
     <Shader Name="xukmi/EyeWPlusTess" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_EyeWPlusTess">
@@ -1033,6 +1048,7 @@
       <Property Name="DisplaceMultiplier" Type="Float" />
       <Property Name="DisplaceNormalMultiplier" Type="Float" />
       <Property Name="DisplaceFull" Type="Float" Range="-1, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="Clock" Type="Color" />
     </Shader>
     <Shader Name="xukmi/MainOpaquePlus" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_MainOpaquePlus">
@@ -1106,6 +1122,7 @@
       <Property Name="ReflectRotation" Type="Float" Range="0, 360" />
       <Property Name="ReflectMapDetail" Type="Texture" />
       <Property Name="ReflectColMix" Type="Float" Range="0, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="ShadowHSV" Type="Color" />
     </Shader>
     <Shader Name="xukmi/MainOpaquePlusTess" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_MainOpaquePlusTess">
@@ -1192,6 +1209,7 @@
       <Property Name="ReflectRotation" Type="Float" Range="0, 360" />
       <Property Name="ReflectMapDetail" Type="Texture" />
       <Property Name="ReflectColMix" Type="Float" Range="0, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="ShadowHSV" Type="Color" />
     </Shader>
     <Shader Name="xukmi/MainAlphaPlus" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_MainAlphaPlus">
@@ -1267,6 +1285,7 @@
       <Property Name="ReflectRotation" Type="Float" Range="0, 360" />
       <Property Name="ReflectMapDetail" Type="Texture" />
       <Property Name="ReflectColMix" Type="Float" Range="0, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="ShadowHSV" Type="Color" />
     </Shader>
     <Shader Name="xukmi/MainAlphaPlusTess" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_MainAlphaPlusTess">
@@ -1355,6 +1374,7 @@
       <Property Name="ReflectRotation" Type="Float" Range="0, 360" />
       <Property Name="ReflectMapDetail" Type="Texture" />
       <Property Name="ReflectColMix" Type="Float" Range="0, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="ShadowHSV" Type="Color" />
     </Shader>
     <Shader Name="xukmi/MainItemPlus" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_MainItemPlus">
@@ -1421,6 +1441,7 @@
       <Property Name="ReflectRotation" Type="Float" Range="0, 360" />
       <Property Name="ReflectMapDetail" Type="Texture" />
       <Property Name="ReflectColMix" Type="Float" Range="0, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="ShadowHSV" Type="Color" />
     </Shader>
     <Shader Name="xukmi/MainItemPlusTess" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_MainItemPlusTess">
@@ -1500,6 +1521,7 @@
       <Property Name="DisplaceFull" Type="Float" Range="-1, 1" />
       <Property Name="ShrinkVal" Type="Float" Range="0, 1" />
       <Property Name="ShrinkVerticalAdjust" Type="Float" Range="-1, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="ClockDisp" Type="Color" />
     </Shader>
     <Shader Name="xukmi/MainItemAlphaPlus" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_MainItemAlphaPlus">
@@ -1568,6 +1590,7 @@
       <Property Name="ReflectRotation" Type="Float" Range="0, 360" />
       <Property Name="ReflectMapDetail" Type="Texture" />
       <Property Name="ReflectColMix" Type="Float" Range="0, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="ShadowHSV" Type="Color" />
     </Shader>
     <Shader Name="xukmi/MainItemAlphaPlusTess" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_MainItemAlphaPlusTess">
@@ -1649,6 +1672,7 @@
       <Property Name="DisplaceFull" Type="Float" Range="-1, 1" />
       <Property Name="ShrinkVal" Type="Float" Range="0, 1" />
       <Property Name="ShrinkVerticalAdjust" Type="Float" Range="-1, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="ClockDisp" Type="Color" />
     </Shader>
     <Shader Name="xukmi/MainItemStudioPlus" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_MainItemStudioPlus">
@@ -1729,6 +1753,7 @@
       <Property Name="patternclamp3" Type="Float" Range="0, 1" />
       <Property Name="ambientshadowOFF" Type="Float" Range="0, 1" />
       <Property Name="EmissionPower" Type="Float" Range="0, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
     </Shader>
     <Shader Name="xukmi/MainItemStudioPlusTess" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_MainItemStudioPlusTess">
       <Property Name="AnotherRamp" Type="Texture" />
@@ -1820,6 +1845,7 @@
       <Property Name="DisplaceFull" Type="Float" Range="-1, 1" />
       <Property Name="ShrinkVal" Type="Float" Range="0, 1" />
       <Property Name="ShrinkVerticalAdjust" Type="Float" Range="-1, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="Clock" Type="Color" />
     </Shader>
     <Shader Name="xukmi/MainItemStudioAlphaPlus" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_MainItemStudioAlphaPlus">
@@ -1900,6 +1926,7 @@
       <Property Name="alpha" Type="Float" Range="0, 1" />
       <Property Name="AlphaOptionCutoff" Type="Float" Range="0, 2" />
       <Property Name="AlphaOptionZWrite" Type="Float" Range="0, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
     </Shader>
     <Shader Name="xukmi/MainItemStudioAlphaPlusTess" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_MainItemStudioAlphaPlusTess">
       <Property Name="AnotherRamp" Type="Texture" />
@@ -1991,6 +2018,7 @@
       <Property Name="DisplaceFull" Type="Float" Range="-1, 1" />
       <Property Name="ShrinkVal" Type="Float" Range="0, 1" />
       <Property Name="ShrinkVerticalAdjust" Type="Float" Range="-1, 1" />
+	  <Property Name="Saturation" Type="Float" Range="0, 2" />
       <Property Name="Clock" Type="Color" />
     </Shader>
     <Shader Name="xukmi/Debug/WireframeTess" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_WireframeTess">

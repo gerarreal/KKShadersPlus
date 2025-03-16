@@ -74,7 +74,7 @@ fixed4 frag (Varyings i, int frontFace : VFACE) : SV_Target
 	float bodyFres = fresnel;
 	bodyFres = saturate(pow(1-bodyFres, _KKPRimSoft) * _KKPRimIntensity);
 	_KKPRimColor.a *= (_UseKKPRim);
-	float3 bodyFresCol = bodyFres * _KKPRimColor + (1 - bodyFres) * diffuse;
+	float3 bodyFresCol = applySaturation(bodyFres * _KKPRimColor + (1 - bodyFres) * diffuse, _Saturation);
 
 	//Lighting begins here
 
@@ -194,7 +194,7 @@ fixed4 frag (Varyings i, int frontFace : VFACE) : SV_Target
 	lineWidth = min(lineWidth, lineMaskB) - 1;
 	lineWidth = _linetexon * lineWidth + 1.0;
 
-	float3 finalCol = (lineWidth * specularDiffuse + diffuseAdjusted);
+	float3 finalCol = applySaturation(lineWidth * specularDiffuse + diffuseAdjusted, _Saturation);
 	
 	float3 hsl = RGBtoHSL(finalCol);
 	hsl.x = hsl.x + _ShadowHSV.x;

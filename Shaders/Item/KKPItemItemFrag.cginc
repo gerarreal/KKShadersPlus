@@ -81,7 +81,7 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
 	float kkpFres = dot(normal, rotView);
 	kkpFres = saturate(pow(1-kkpFres, _KKPRimSoft) * _KKPRimIntensity);
 	_KKPRimColor.a *= (_UseKKPRim);
-	float3 kkpFresCol = kkpFres * _KKPRimColor + (1 - kkpFres) * diffuse;
+	float3 kkpFresCol = applySaturation(kkpFres * _KKPRimColor + (1 - kkpFres) * diffuse, _Saturation);
 
 	//Apparently can rotate?
 	float time = _TimeEditor.y + _Time.y;
@@ -274,7 +274,7 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
 	diffuse = -shadingAdjustment + diffuse;
 
 	float3 finalDiffuse = detailLineShadow * diffuse + shadingAdjustment;
-	finalDiffuse += specularCol;
+	finalDiffuse = applySaturation(finalDiffuse + specularCol, _Saturation);
 	
 	float3 hsl = RGBtoHSL(finalDiffuse);
 	hsl.x = hsl.x + _ShadowHSV.x;

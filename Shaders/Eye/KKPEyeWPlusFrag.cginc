@@ -69,7 +69,7 @@ fixed4 frag (Varyings i) : SV_Target
 
 	float3 lightCol = (_LightColor0.xyz + vertexLighting.rgb * vertexLightRamp) * float3(0.600000024, 0.600000024, 0.600000024) + _CustomAmbient;
 	lightCol = max(lightCol, _ambientshadowG.xyz);
-	finalCol *= lightCol;
+	finalCol = applySaturation(finalCol * lightCol, _Saturation);
 	
 	float3 hsl = RGBtoHSL(finalCol);
 	hsl.x = hsl.x + _ShadowHSV.x;

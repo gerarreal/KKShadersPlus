@@ -69,6 +69,7 @@
 		_rimReflectMode ("Rimlight Placement", Float) = 0.0
 
 		_SpecularNormalScale ("Specular Normal Map Relative Scale", Float) = 1
+		_Saturation ("Saturation", Float) = 1
 	}
 	SubShader
 	{
@@ -151,7 +152,7 @@
 				}
 				diffuse = saturate(diffuse);
 				float3 lightCol = _LightColor0.xyz * float3(0.600000024, 0.600000024, 0.600000024) + _CustomAmbient.rgb;
-				diffuse *= lightCol;
+				diffuse = applySaturation(diffuse * lightCol, _Saturation);
 
 				return float4(diffuse, 1);
 
