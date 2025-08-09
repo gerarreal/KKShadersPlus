@@ -83,6 +83,7 @@ Shader "xukmi/MainOpaquePlusColorMask"
 		
 		_SpecularNormalScale ("Specular Normal Map Relative Scale", Float) = 1
 		_SpecularDetailNormalScale ("Specular Detail Normal Map Relative Scale", Float) = 1
+		_Saturation ("Saturation", Float) = 1
 	}
 	SubShader
 	{
@@ -226,7 +227,7 @@ Shader "xukmi/MainOpaquePlusColorMask"
 				float3 outLineCol = _LightColor0.rgb * float3(0.600000024, 0.600000024, 0.600000024) + _CustomAmbient.rgb;
 
 				float3 finalColor = finalDiffuse * outLineCol;
-				finalColor = lerp(finalColor, _OutlineColor.rgb, _OutlineColor.a);
+				finalColor = applySaturation(lerp(finalColor, _OutlineColor.rgb, _OutlineColor.a), _Saturation);
 				return float4(finalColor, 1.0);
 
 
