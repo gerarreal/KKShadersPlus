@@ -90,7 +90,7 @@ fixed4 frag (Varyings i, int frontFace : VFACE) : SV_Target
 	float kkpFres = max(0.1, dot(adjustedNormal, rotView));
 	kkpFres = saturate(pow(1-kkpFres, _KKPRimSoft) * _KKPRimIntensity);
 	_KKPRimColor.a *= (_UseKKPRim);
-	float3 kkpFresCol = kkpFres * _KKPRimColor + (1 - kkpFres) * diffuse;
+	float3 kkpFresCol = applySaturation(kkpFres * _KKPRimColor + (1 - kkpFres) * diffuse, _Saturation);
 	
 	float fresnel = max(0.0, dot(viewDir, adjustedNormal));
 	float anotherRamp = SAMPLE_TEX2D(_AnotherRamp, fresnel * _AnotherRamp_ST.xy + _AnotherRamp_ST.zw).x;
@@ -237,7 +237,7 @@ fixed4 frag (Varyings i, int frontFace : VFACE) : SV_Target
 	finalDiffuse *= shading;
 	shading = (_LightColor0.xyz + vertexLighting.rgb * vertexLightRamp)* float3(0.600000024, 0.600000024, 0.600000024) + _CustomAmbient.rgb;
 	shading = max(shading, _ambientshadowG.rgb);
-	finalDiffuse *= shading;
+	finalDiffuse = applySaturation(finalDiffuse * shading, _Saturation);
 	
 	float3 hsl = RGBtoHSL(finalDiffuse);
 	hsl.x = hsl.x + _ShadowHSV.x;

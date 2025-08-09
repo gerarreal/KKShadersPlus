@@ -29,6 +29,7 @@
 
 		_DisablePointLights ("Disable Point Lights", Range(0,1)) = 0.0
 		_ShadowHSV ("Shadow HSV", Vector) = (0, 0, 0, 0)
+		_Saturation ("Saturation", Float) = 1
 	}
 	SubShader
 	{

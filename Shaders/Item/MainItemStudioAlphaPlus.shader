@@ -102,6 +102,7 @@
 		
 		_SpecularNormalScale ("Specular Normal Map Relative Scale", Float) = 1
 		_SpecularDetailNormalScale ("Specular Detail Normal Map Relative Scale", Float) = 1
+		_Saturation ("Saturation", Float) = 1
 	}
 	SubShader
 	{

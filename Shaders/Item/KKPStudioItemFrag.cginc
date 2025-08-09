@@ -134,7 +134,7 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
 	float kkpFres = dot(normal, rotView);
 	kkpFres = saturate(pow(1-kkpFres, _KKPRimSoft) * _KKPRimIntensity);
 	_KKPRimColor.a *= (_UseKKPRim);
-	float3 kkpFresCol = kkpFres * _KKPRimColor + (1 - kkpFres) * diffuse;
+	float3 kkpFresCol = applySaturation(kkpFres * _KKPRimColor + (1 - kkpFres) * diffuse, _Saturation);
 
 	float2 detailUV = i.uv0 * _DetailMask_ST.xy + _DetailMask_ST.zw;
 	float4 detailMask = SAMPLE_TEX2D(_DetailMask, detailUV);
@@ -328,7 +328,7 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target {
 	diffuse = saturate(diffuse);
 	diffuse = -shadingAdjustment + diffuse;
 
-	float3 finalDiffuse = texShadow * diffuse + shadingAdjustment;
+	float3 finalDiffuse = applySaturation(texShadow * diffuse + shadingAdjustment, _Saturation);
 	
 	float3 hsl = RGBtoHSL(finalDiffuse);
 	hsl.x = hsl.x + _ShadowHSV.x;

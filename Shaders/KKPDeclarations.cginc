@@ -11,4 +11,12 @@
 #define SAMPLE_TEX2D_SAMPLER(tex,samplertex,coord) tex.Sample (sampler##samplertex,coord)
 #define SAMPLE_TEX2D_SAMPLER_LOD(tex,samplertex,coord,lod) tex.SampleLevel (sampler##samplertex,coord,lod)
 
+float _Saturation;
+
+float3 applySaturation(float3 col, float saturation) {
+	float average = col.r * 0.2126 + col.g * 0.7152 + col.b * 0.0722;
+	float adjustment = (1 - saturation) * average;
+	return col * saturation + adjustment;
+}
+
 #endif
