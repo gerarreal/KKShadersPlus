@@ -2,6 +2,12 @@ Shader "xukmi/MainAlphaPlus"
 {
 	Properties
 	{
+		_ColMask ("Color Mask", 2D) = "black" {}
+		[Gamma]_Col0 ("Color 0", Color) = (1, 1, 1, 1)
+		[Gamma]_Col1 ("Color 1", Color) = (1, 1, 1, 1)
+		[Gamma]_Col2 ("Color 2", Color) = (1, 1, 1, 1)
+		[Gamma]_Col3 ("Color 3", Color) = (1, 1, 1, 1)
+
 		_AnotherRamp ("Another Ramp(LineR)", 2D) = "white" {}
 		_MainTex ("MainTex", 2D) = "white" {}
 		_NormalMap ("Normal Map", 2D) = "bump" {}
