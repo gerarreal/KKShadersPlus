@@ -2,7 +2,7 @@
 <manifest schema-ver="1">
   <guid>xukmi.Shaders.VanillaPlus</guid>
   <name>Vanilla Plus</name>
-  <version>1.7.2</version>
+  <version>1.7.1</version>
   <author>xukmi</author>
   <description>Vanilla KK Shaders with more features</description>
   <website>https://www.pixiv.net/en/users/66587336</website>
@@ -256,7 +256,7 @@
       <Property Name="DisplaceNormalMultiplier" Type="Float" />
       <Property Name="DisplaceFull" Type="Float" Range="-1, 1" />
       <Property Name="Saturation" Type="Float" Range="0, 2" />
-      <Property Name="Clock" Type="Color" />
+      <Property Name="Clock" Type="Color" DefaultValue="(0, 0, 0, 1)" />
       <Property Name="ShadowHSV" Type="Color" />
     </Shader>
     <Shader Name="xukmi/SkinPlusTessReflect" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_SkinPlusTessReflect">
@@ -352,7 +352,7 @@
       <Property Name="DisplaceMultiplier" Type="Float" />
       <Property Name="DisplaceNormalMultiplier" Type="Float" />
       <Property Name="DisplaceFull" Type="Float" Range="-1, 1" />
-      <Property Name="Clock" Type="Color" />
+      <Property Name="Clock" Type="Color" DefaultValue="0, 0, 0, 1" />
       <Property Name="ReflectRotation" Type="Float" Range="0, 360" />
       <Property Name="ReflectMask" Type="Texture" />
       <Property Name="ReflectColMix" Type="Float" Range="0, 1" />
@@ -474,7 +474,7 @@
       <Property Name="DisplaceNormalMultiplier" Type="Float" />
       <Property Name="DisplaceFull" Type="Float" Range="-1, 1" />
       <Property Name="Saturation" Type="Float" Range="0, 2" />
-      <Property Name="Clock" Type="Color" />
+      <Property Name="Clock" Type="Color" DefaultValue="0, 0, 0, 1" />
     </Shader>
     <Shader Name="xukmi/HairPlusReflect" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_HairPlusReflect">
       <Property Name="DetailMask" Type="Texture" />
@@ -617,7 +617,7 @@
       <Property Name="DisplaceNormalMultiplier" Type="Float" />
       <Property Name="DisplaceFull" Type="Float" Range="-1, 1" />
       <Property Name="Saturation" Type="Float" Range="0, 2" />
-      <Property Name="Clock" Type="Color" />
+      <Property Name="Clock" Type="Color" DefaultValue="0, 0, 0, 1" />
     </Shader>
     <Shader Name="xukmi/HairFrontPlus" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_HairFrontPlus">
       <Property Name="DetailMask" Type="Texture" />
@@ -752,7 +752,7 @@
       <Property Name="DisplaceMultiplier" Type="Float" />
       <Property Name="DisplaceNormalMultiplier" Type="Float" />
       <Property Name="DisplaceFull" Type="Float" Range="-1, 1" />
-      <Property Name="Clock" Type="Color" />
+      <Property Name="Clock" Type="Color" DefaultValue="0, 0, 0, 1" />
       <Property Name="transparency" Type="Float" Range="0, 1" />
       <Property Name="Saturation" Type="Float" Range="0, 2" />
     </Shader>
@@ -897,7 +897,7 @@
       <Property Name="DisplaceMultiplier" Type="Float" />
       <Property Name="DisplaceNormalMultiplier" Type="Float" />
       <Property Name="DisplaceFull" Type="Float" Range="-1, 1" />
-      <Property Name="Clock" Type="Color" />
+      <Property Name="Clock" Type="Color" DefaultValue="0, 0, 0, 1" />
       <Property Name="transparency" Type="Float" Range="0, 1" />
       <Property Name="Saturation" Type="Float" Range="0, 2" />
     </Shader>
@@ -982,7 +982,7 @@
       <Property Name="DisplaceNormalMultiplier" Type="Float" />
       <Property Name="DisplaceFull" Type="Float" Range="-1, 1" />
       <Property Name="Saturation" Type="Float" Range="0, 2" />
-      <Property Name="Clock" Type="Color" />
+      <Property Name="Clock" Type="Color" DefaultValue="0, 0, 0, 1" />
     </Shader>
     <Shader Name="xukmi/EyeWPlus" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_EyeWPlus">
       <Property Name="MainTex" Type="Texture" />
@@ -1049,7 +1049,7 @@
       <Property Name="DisplaceNormalMultiplier" Type="Float" />
       <Property Name="DisplaceFull" Type="Float" Range="-1, 1" />
       <Property Name="Saturation" Type="Float" Range="0, 2" />
-      <Property Name="Clock" Type="Color" />
+      <Property Name="Clock" Type="Color" DefaultValue="0, 0, 0, 1" />
     </Shader>
     <Shader Name="xukmi/MainOpaquePlus" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_MainOpaquePlus">
       <Property Name="AnotherRamp" Type="Texture" />
@@ -1209,7 +1209,7 @@
       <Property Name="DisplaceFull" Type="Float" Range="-1, 1" />
       <Property Name="ShrinkVal" Type="Float" Range="0, 1" />
       <Property Name="ShrinkVerticalAdjust" Type="Float" Range="-1, 1" />
-      <Property Name="Clock" Type="Color" />
+      <Property Name="Clock" Type="Color" DefaultValue="0, 0, 0, 1" />
       <Property Name="AdjustBackfaceNormals" Type="Float" Range="0, 1" />
       <Property Name="ReflectRotation" Type="Float" Range="0, 360" />
       <Property Name="ReflectMapDetail" Type="Texture" />
@@ -1542,7 +1542,7 @@
       <Property Name="ShrinkVal" Type="Float" Range="0, 1" />
       <Property Name="ShrinkVerticalAdjust" Type="Float" Range="-1, 1" />
       <Property Name="Saturation" Type="Float" Range="0, 2" />
-      <Property Name="ClockDisp" Type="Color" />
+      <Property Name="ClockDisp" Type="Color" DefaultValue="(0, 0, 0, 1)" />
     </Shader>
     <Shader Name="xukmi/MainItemAlphaPlus" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_MainItemAlphaPlus">
       <Property Name="AnotherRamp" Type="Texture" />
@@ -1693,7 +1693,7 @@
       <Property Name="ShrinkVal" Type="Float" Range="0, 1" />
       <Property Name="ShrinkVerticalAdjust" Type="Float" Range="-1, 1" />
       <Property Name="Saturation" Type="Float" Range="0, 2" />
-      <Property Name="ClockDisp" Type="Color" />
+      <Property Name="ClockDisp" Type="Color" DefaultValue="(0, 0, 0, 1)" />
     </Shader>
     <Shader Name="xukmi/MainItemStudioPlus" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_MainItemStudioPlus">
       <Property Name="AnotherRamp" Type="Texture" />
@@ -1866,7 +1866,7 @@
       <Property Name="ShrinkVal" Type="Float" Range="0, 1" />
       <Property Name="ShrinkVerticalAdjust" Type="Float" Range="-1, 1" />
       <Property Name="Saturation" Type="Float" Range="0, 2" />
-      <Property Name="Clock" Type="Color" />
+      <Property Name="Clock" Type="Color" DefaultValue="0, 0, 0, 1" />
     </Shader>
     <Shader Name="xukmi/MainItemStudioAlphaPlus" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_MainItemStudioAlphaPlus">
       <Property Name="AnotherRamp" Type="Texture" />
@@ -2039,7 +2039,7 @@
       <Property Name="ShrinkVal" Type="Float" Range="0, 1" />
       <Property Name="ShrinkVerticalAdjust" Type="Float" Range="-1, 1" />
       <Property Name="Saturation" Type="Float" Range="0, 2" />
-      <Property Name="Clock" Type="Color" />
+      <Property Name="Clock" Type="Color" DefaultValue="0, 0, 0, 1" />
     </Shader>
     <Shader Name="xukmi/Debug/WireframeTess" AssetBundle="chara/xukmi/shaders/vanillaplus.unity3d" Asset="a_WireframeTess">
       <Property Name="LineColor" Type="Color" />
@@ -2058,7 +2058,7 @@
       <Property Name="DisplaceFull" Type="Float" Range="-1, 1" />
       <Property Name="ShrinkVal" Type="Float" Range="0, 1" />
       <Property Name="ShrinkVerticalAdjust" Type="Float" Range="-1, 1" />
-      <Property Name="Clock" Type="Color" />
+      <Property Name="Clock" Type="Color" DefaultValue="0, 0, 0, 1" />
     </Shader>
   </MaterialEditor>
   <game>Koikatsu</game>
