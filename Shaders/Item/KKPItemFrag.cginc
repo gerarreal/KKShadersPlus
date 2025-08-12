@@ -29,7 +29,20 @@ fixed4 frag (Varyings i, int faceDir : VFACE) : SV_Target{
 	float3 viewDir = normalize(_WorldSpaceCameraPos.xyz - i.posWS);
 	float3 halfDir = normalize(viewDir + worldLightPos);
 
-	float3 diffuse = mainTex.rgb;
+	_Col0 = max(_Col0, 1E-06);
+	_Col1 = max(_Col1, 1E-06);
+	_Col2 = max(_Col2, 1E-06);
+	_Col3 = max(_Col3, 1E-06);
+
+	float2 colorUV = i.uv0 * _ColMask_ST.xy + _ColMask_ST.zw;
+	float4 colorMask = SAMPLE_TEX2D_SAMPLER(_ColMask, _MainTex, colorUV);
+
+	float3 color = _Col0;
+	color = colorMask.r * (_Col1 - color) + color;
+	color = colorMask.g * (_Col2 - color) + color;
+	color = colorMask.b * (_Col3 - color) + color;
+	float3 diffuse = mainTex * color;
+
 	float3 shadingAdjustment = ShadeAdjust(diffuse);
 	float3 normal = GetNormal(i);
 	_NormalMapScale *= _SpecularNormalScale;

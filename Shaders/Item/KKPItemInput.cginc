@@ -81,6 +81,14 @@
 	float4 _LineMask_ST;
 	
 	float4 _ColorMask_ST;
+
+	//Extra color
+	DECLARE_TEX2D_NOSAMPLER(_ColMask);
+	float4 _ColMask_ST;
+	float4 _Col0;
+	float4 _Col1;
+	float4 _Col2;
+	float4 _Col3;
 	
 	float _Cutoff;
 	float4 _ShadowColor;
