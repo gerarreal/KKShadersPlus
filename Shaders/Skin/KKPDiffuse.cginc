@@ -181,9 +181,11 @@ float3 GetDiffuse(Varyings i){
 	float4 colorMask = SAMPLE_TEX2D_SAMPLER(_ColMask, _MainTex, colorUV);
 	
 	float3 color = _Col0;
+	float3 white = float3(1.0, 1.0, 1.0);
 	color = colorMask.r * (_Col1 - color) + color;
 	color = colorMask.g * (_Col2 - color) + color;
 	color = colorMask.b * (_Col3 - color) + color;
+	color = (1.0-colorMask.a) * (white - color) + color;
 	
 	mainTex.rgb = mainTex.rgb * color;
 	
